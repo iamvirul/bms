@@ -72,7 +72,7 @@ class DashboardScreen extends ConsumerWidget {
                     value: 'Rs. 0.00',
                     icon: Icons.people_outline,
                     color: AppColors.error,
-                    onTap: () => context.go(AppRoutes.debtors),
+                    onTap: () => context.go(AppRoutes.customers),
                   ),
                 ],
               ),

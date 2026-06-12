@@ -1,113 +1,257 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../../core/router/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
+import '../../features/auth/domain/auth_state.dart';
+import '../../providers/auth_provider.dart';
 
-class SidebarNav extends StatelessWidget {
-  const SidebarNav({super.key, required this.currentLocation, required this.role});
+const _kSidebarBg = Color(0xFF111827);
+const _kSidebarHover = Color(0xFF1F2937);
+const _kSidebarActive = Color(0xFF1D4ED8);
+const _kSidebarActiveText = Colors.white;
+const _kSidebarText = Color(0xFF9CA3AF);
+const _kSidebarAccent = Color(0xFF3B82F6);
+const _kSidebarDivider = Color(0xFF1F2937);
+
+class SidebarNav extends ConsumerWidget {
+  const SidebarNav({super.key, required this.currentLocation});
 
   final String currentLocation;
-  final String role;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(currentAuthStateProvider);
+    final user = authState is Authenticated ? authState.user : null;
+    final role = user?.role ?? 'cashier';
+
     return Container(
-      width: AppConstants.sidebarWidth,
-      color: AppColors.primary,
+      width: 224,
+      color: _kSidebarBg,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
-          const Divider(color: Colors.white24, height: 1),
+          _Header(),
+          const Divider(color: _kSidebarDivider, height: 1),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              children: _buildItems(context),
+              children: _navItems
+                  .where((item) => !item.adminOnly || role != 'cashier')
+                  .map((item) => _NavTile(
+                        item: item,
+                        isActive: currentLocation.startsWith(item.route),
+                        onTap: () => context.go(item.route),
+                      ))
+                  .toList(),
             ),
           ),
+          const Divider(color: _kSidebarDivider, height: 1),
+          if (user != null) _UserFooter(user: user, ref: ref),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-      child: Text(
-        AppConstants.appName,
-        style: AppTextStyles.titleLarge.copyWith(color: Colors.white),
-      ),
-    );
-  }
-
-  List<Widget> _buildItems(BuildContext context) {
-    final items = _navItems.where((item) => _isVisible(item)).toList();
-    return items
-        .map((item) => _NavItem(
-              item: item,
-              isActive: currentLocation == item.route,
-              onTap: () => context.go(item.route),
-            ))
-        .toList();
-  }
-
-  bool _isVisible(_NavItemData item) {
-    if (item.adminOnly && role == 'cashier') return false;
-    return true;
-  }
-
   static const List<_NavItemData> _navItems = [
-    _NavItemData(label: 'Dashboard', icon: Icons.dashboard_outlined, route: AppRoutes.dashboard),
-    _NavItemData(label: 'POS / Sales', icon: Icons.point_of_sale_outlined, route: AppRoutes.pos),
-    _NavItemData(label: 'Inventory', icon: Icons.inventory_2_outlined, route: AppRoutes.inventory),
-    _NavItemData(label: 'Debtors', icon: Icons.people_outline, route: AppRoutes.debtors),
+    _NavItemData(
+      label: 'Dashboard',
+      icon: Icons.grid_view_rounded,
+      route: AppRoutes.dashboard,
+    ),
+    _NavItemData(
+      label: 'POS / Sales',
+      icon: Icons.point_of_sale_rounded,
+      route: AppRoutes.pos,
+    ),
+    _NavItemData(
+      label: 'Inventory',
+      icon: Icons.inventory_2_rounded,
+      route: AppRoutes.inventory,
+    ),
+    _NavItemData(
+      label: 'Customers',
+      icon: Icons.people_rounded,
+      route: AppRoutes.customers,
+    ),
     _NavItemData(
       label: 'Suppliers',
-      icon: Icons.local_shipping_outlined,
+      icon: Icons.local_shipping_rounded,
       route: AppRoutes.suppliers,
       adminOnly: true,
     ),
-    _NavItemData(label: 'Cheques', icon: Icons.calendar_month_outlined, route: AppRoutes.cheques),
-    _NavItemData(label: 'Petty Cash', icon: Icons.account_balance_wallet_outlined, route: AppRoutes.pettyCash),
-    _NavItemData(label: 'Reports', icon: Icons.bar_chart_outlined, route: AppRoutes.reports),
+    _NavItemData(
+      label: 'Cheques',
+      icon: Icons.account_balance_rounded,
+      route: AppRoutes.cheques,
+    ),
+    _NavItemData(
+      label: 'Petty Cash',
+      icon: Icons.account_balance_wallet_rounded,
+      route: AppRoutes.pettyCash,
+    ),
+    _NavItemData(
+      label: 'Reports',
+      icon: Icons.bar_chart_rounded,
+      route: AppRoutes.reports,
+      adminOnly: true,
+    ),
   ];
 }
 
-class _NavItem extends StatelessWidget {
-  const _NavItem({required this.item, required this.isActive, required this.onTap});
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: _kSidebarAccent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
+          ),
+          const SizedBox(width: 10),
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'BMS',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              Text(
+                'Business Manager',
+                style: TextStyle(color: _kSidebarText, fontSize: 11),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavTile extends StatefulWidget {
+  const _NavTile({required this.item, required this.isActive, required this.onTap});
 
   final _NavItemData item;
   final bool isActive;
   final VoidCallback onTap;
 
   @override
+  State<_NavTile> createState() => _NavTileState();
+}
+
+class _NavTileState extends State<_NavTile> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = widget.isActive;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            decoration: BoxDecoration(
+              color: active
+                  ? _kSidebarActive.withAlpha(40)
+                  : _hovered
+                      ? _kSidebarHover
+                      : Colors.transparent,
+              borderRadius: BorderRadius.circular(7),
+              border: active
+                  ? Border(
+                      left: BorderSide(color: _kSidebarAccent, width: 3),
+                    )
+                  : const Border(),
+            ),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(active ? 13 : 16, 10, 12, 10),
+              child: Row(
+                children: [
+                  Icon(
+                    widget.item.icon,
+                    size: 18,
+                    color: active ? _kSidebarAccent : _kSidebarText,
+                  ),
+                  const SizedBox(width: 11),
+                  Text(
+                    widget.item.label,
+                    style: TextStyle(
+                      color: active ? _kSidebarActiveText : _kSidebarText,
+                      fontSize: 13.5,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _UserFooter extends StatelessWidget {
+  const _UserFooter({required this.user, required this.ref});
+
+  final dynamic user;
+  final WidgetRef ref;
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      child: Material(
-        color: isActive ? Colors.white.withAlpha(30) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          splashColor: Colors.white.withAlpha(20),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Row(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: _kSidebarAccent.withAlpha(50),
+            child: Text(
+              (user.name as String).isNotEmpty ? (user.name as String)[0].toUpperCase() : '?',
+              style: const TextStyle(color: _kSidebarAccent, fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(item.icon, color: Colors.white, size: 20),
-                const SizedBox(width: 12),
                 Text(
-                  item.label,
-                  style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+                  user.name as String,
+                  style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  (user.role as String).toUpperCase(),
+                  style: const TextStyle(color: _kSidebarText, fontSize: 10.5),
                 ),
               ],
             ),
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.logout_rounded, size: 16, color: _kSidebarText),
+            tooltip: 'Sign out',
+            onPressed: () => ref.read(authStateProvider.notifier).logout(),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+          ),
+        ],
       ),
     );
   }
