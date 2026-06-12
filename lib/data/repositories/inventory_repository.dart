@@ -17,7 +17,7 @@ class InventoryRepository {
 
   Stream<List<Product>> watchProducts() => _inventory.watchAll();
 
-  Stream<List<Stoc>> watchLowStock() => _inventory.watchLowStock();
+  Stream<List<StockLevel>> watchLowStock() => _inventory.watchLowStock();
 
   Future<Product?> findByBarcode(String barcode) => _inventory.findByBarcode(barcode);
 
@@ -51,7 +51,7 @@ class InventoryRepository {
     );
 
     // Initialize stock at zero
-    await _inventory.upsertStock(StocCompanion.insert(productId: id, qty: const Value(0)));
+    await _inventory.upsertStock(StockCompanion.insert(productId: id, qty: const Value(0)));
 
     await _audit.log(
       id: _uuid.v7(),
@@ -88,7 +88,7 @@ class InventoryRepository {
     }
 
     await _inventory.upsertStock(
-      StocCompanion(productId: Value(productId), qty: Value(newQty)),
+      StockCompanion(productId: Value(productId), qty: Value(newQty)),
     );
 
     await _inventory.recordMovement(

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+@DataClassName('PettyCashEntry')
 class PettyCash extends Table {
   TextColumn get id => text()();
 

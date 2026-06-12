@@ -47,8 +47,8 @@ class AuthStateNotifier extends _$AuthStateNotifier {
 
 /// Convenience: flat AuthState (not wrapped in AsyncValue) for router.
 @riverpod
-AuthState authState(Ref ref) {
-  return ref.watch(authStateNotifierProvider).maybeWhen(
+AuthState currentAuthState(Ref ref) {
+  return ref.watch(authStateProvider).maybeWhen(
         data: (s) => s,
         orElse: () => const AuthState.unauthenticated(),
       );

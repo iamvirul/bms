@@ -15,7 +15,7 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
+    final authState = ref.watch(currentAuthStateProvider);
     final userName = authState is Authenticated ? authState.user.name : '';
 
     return Scaffold(
@@ -24,7 +24,7 @@ class DashboardScreen extends ConsumerWidget {
         actions: [
           TextButton.icon(
             onPressed: () async {
-              await ref.read(authStateNotifierProvider.notifier).logout();
+              await ref.read(authStateProvider.notifier).logout();
             },
             icon: const Icon(Icons.logout, color: Colors.white),
             label: const Text('Sign Out', style: TextStyle(color: Colors.white)),

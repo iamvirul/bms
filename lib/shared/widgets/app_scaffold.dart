@@ -14,7 +14,7 @@ class AppScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
+    final authState = ref.watch(currentAuthStateProvider);
     final role = authState is Authenticated ? authState.user.role : 'cashier';
     final location = GoRouterState.of(context).matchedLocation;
     final isWide = MediaQuery.sizeOf(context).width >= AppConstants.sidebarBreakpoint;

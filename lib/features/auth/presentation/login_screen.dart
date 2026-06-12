@@ -27,7 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authStateNotifierProvider.notifier).login(
+    await ref.read(authStateProvider.notifier).login(
           _usernameController.text.trim(),
           _passwordController.text,
         );
@@ -35,9 +35,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authAsync = ref.watch(authStateNotifierProvider);
+    final authAsync = ref.watch(authStateProvider);
 
-    ref.listen(authStateNotifierProvider, (_, next) {
+    ref.listen(authStateProvider, (_, next) {
       next.whenOrNull(
         error: (e, _) => ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),

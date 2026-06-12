@@ -29,21 +29,24 @@ class InventoryDao extends DatabaseAccessor<AppDatabase> with _$InventoryDaoMixi
   Future<void> updateProduct(ProductsCompanion entry) =>
       (update(products)..where((p) => p.id.equals(entry.id.value))).write(entry);
 
-  // Stock
+  // Stock -- data class is StockLevel (@DataClassName), companion remains StockCompanion
 
-  Future<Stoc?> getStock(String productId) =>
+  Future<StockLevel?> getStock(String productId) =>
       (select(stock)..where((s) => s.productId.equals(productId))).getSingleOrNull();
 
-  Stream<List<Stoc>> watchLowStock() => (select(stock).join([
-        innerJoin(products, products.id.equalsExp(stock.productId)),
-      ])
-            ..where(stock.qty.isSmallerOrEqualValue(products.reorderLevel)))
-          .watch()
-          .map(
-            (rows) => rows.map((r) => r.readTable(stock)).toList(),
-          );
+  Stream<List<StockLevel>> watchLowStock() {
+    final query = select(stock).join([
+      innerJoin(products, products.id.equalsExp(stock.productId)),
+    ]);
+    // Compare qty (real) against reorderLevel (int) via expression cast
+    query.where(stock.qty.isSmallerOrEqualValue(0) |
+        CustomExpression<bool>('stock.qty <= products.reorder_level'));
+    return query.watch().map(
+          (rows) => rows.map((r) => r.readTable(stock)).toList(),
+        );
+  }
 
-  Future<void> upsertStock(StocCompanion entry) =>
+  Future<void> upsertStock(StockCompanion entry) =>
       into(stock).insertOnConflictUpdate(entry);
 
   // Stock movements

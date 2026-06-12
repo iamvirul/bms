@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bcrypt/bcrypt.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -115,7 +116,7 @@ class AuthRepository {
     }
 
     final newHash = BCrypt.hashpw(newPassword, BCrypt.gensalt(logRounds: 12));
-    await _dao.update(UsersCompanion(
+    await _dao.updateUser(UsersCompanion(
       id: Value(userId),
       passwordHash: Value(newHash),
       updatedAt: Value(DateTime.now()),

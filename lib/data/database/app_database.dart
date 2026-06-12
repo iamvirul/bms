@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -89,7 +90,7 @@ class AppDatabase extends _$AppDatabase {
 
     await into(users).insertOnConflictUpdate(
       UsersCompanion.insert(
-        id: const Value('00000000-0000-0000-0000-000000000001'),
+        id: '00000000-0000-0000-0000-000000000001',
         name: 'Developer',
         username: 'dev',
         passwordHash: devPasswordHash,
@@ -100,5 +101,13 @@ class AppDatabase extends _$AppDatabase {
 }
 
 QueryExecutor _openConnection() {
-  return driftDatabase(name: 'bms_local');
+  return driftDatabase(
+    name: 'bms_local',
+    web: kIsWeb
+        ? DriftWebOptions(
+            sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+            driftWorker: Uri.parse('drift_worker.js'),
+          )
+        : null,
+  );
 }

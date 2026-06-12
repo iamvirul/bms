@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart';
 
+import 'users_table.dart';
+
 class Categories extends Table {
   TextColumn get id => text()();
   TextColumn get name => text().withLength(min: 1, max: 100).unique()();
@@ -43,6 +45,7 @@ class ProductUnits extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+@DataClassName('StockLevel')
 class Stock extends Table {
   TextColumn get productId => text().references(Products, #id)();
   RealColumn get qty => real().withDefault(const Constant(0))();
@@ -67,14 +70,6 @@ class StockMovements extends Table {
   TextColumn get refId => text().nullable()();
   TextColumn get refType => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-
-  @override
-  Set<Column<Object>> get primaryKey => {id};
-}
-
-// Forward reference -- resolved by Dart import order
-class Users extends Table {
-  TextColumn get id => text()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

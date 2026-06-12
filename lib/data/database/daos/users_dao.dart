@@ -16,22 +16,24 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
       (select(users)..where((u) => u.id.equals(id))).getSingleOrNull();
 
   Future<List<User>> findAll({bool activeOnly = true}) =>
-      (select(users)..where((u) => activeOnly ? u.isActive.equals(true) : const Constant(true)))
+      (select(users)
+            ..where((u) => activeOnly ? u.isActive.equals(true) : const Constant(true)))
           .get();
 
-  Future<String> insert(UsersCompanion entry) =>
+  Future<String> insertUser(UsersCompanion entry) =>
       into(users).insertReturning(entry).then((u) => u.id);
 
-  Future<bool> update(UsersCompanion entry) =>
-      (update(users)..where((u) => u.id.equals(entry.id.value))).write(entry).then((n) => n > 0);
+  // Renamed to updateUser to avoid clash with Drift's DatabaseConnectionUser.update
+  Future<bool> updateUser(UsersCompanion entry) =>
+      (update(users)..where((u) => u.id.equals(entry.id.value)))
+          .write(entry)
+          .then((n) => n > 0);
 
   Future<void> incrementFailedAttempts(String id) async {
+    final user = await findById(id);
+    if (user == null) return;
     await (update(users)..where((u) => u.id.equals(id))).write(
-      UsersCompanion(
-        failedAttempts: Value(
-          (await findById(id))!.failedAttempts + 1,
-        ),
-      ),
+      UsersCompanion(failedAttempts: Value(user.failedAttempts + 1)),
     );
   }
 

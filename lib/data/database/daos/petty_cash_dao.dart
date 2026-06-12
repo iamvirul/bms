@@ -12,13 +12,13 @@ class PettyCashDao extends DatabaseAccessor<AppDatabase> with _$PettyCashDaoMixi
   Future<String> insert(PettyCashCompanion entry) =>
       into(pettyCash).insertReturning(entry).then((p) => p.id);
 
-  Future<List<PettyCa>> getByDateRange(DateTime from, DateTime to) =>
+  Future<List<PettyCashEntry>> getByDateRange(DateTime from, DateTime to) =>
       (select(pettyCash)
             ..where((p) => p.createdAt.isBetweenValues(from, to))
             ..orderBy([(p) => OrderingTerm.desc(p.createdAt)]))
           .get();
 
-  Future<List<PettyCa>> getPendingApprovals() =>
+  Future<List<PettyCashEntry>> getPendingApprovals() =>
       (select(pettyCash)..where((p) => p.status.equals('pending'))).get();
 
   Future<void> approve(String id, String approvedBy) =>

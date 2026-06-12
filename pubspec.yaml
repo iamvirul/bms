@@ -4,7 +4,7 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
   flutter: ">=3.24.0"
 
 dependencies:
@@ -12,21 +12,23 @@ dependencies:
     sdk: flutter
 
   # State management
-  flutter_riverpod: ^2.5.1
-  riverpod_annotation: ^2.3.5
+  flutter_riverpod: ^3.3.2
+  riverpod_annotation: ^4.0.3
 
   # Navigation
   go_router: ^14.2.0
 
   # Local database
-  drift: ^2.18.0
-  drift_flutter: ^0.1.0
-  sqlite3_flutter_libs: ^0.5.24
+  drift: ^2.34.0
+  drift_flutter: ^0.3.0
+  sqlite3_flutter_libs: ^0.6.0+eol
+  path_provider: ^2.1.5
+  path: ^1.9.1
 
-  # Secure storage for session tokens (replaces SharedPreferences for auth state)
+  # Secure storage for session tokens
   flutter_secure_storage: ^9.2.2
 
-  # UUID generation (v7 time-ordered PKs -- keeps door open for future sync without a migration)
+  # UUID generation (v7 time-ordered PKs)
   uuid: ^4.4.2
 
   # Password hashing
@@ -49,8 +51,8 @@ dependencies:
   intl: ^0.19.0
 
   # Immutable value objects
-  freezed_annotation: ^2.4.4
-  json_annotation: ^4.9.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.12.0
 
   # Logging
   logger: ^2.4.0
@@ -60,32 +62,30 @@ dev_dependencies:
     sdk: flutter
 
   # Code generation
-  build_runner: ^2.4.12
-  drift_dev: ^2.18.0
-  riverpod_generator: ^2.4.3
-  freezed: ^2.5.7
+  build_runner: ^2.15.0
+  drift_dev: ^2.34.0
+  riverpod_generator: ^4.0.4
+  freezed: ^3.2.5
   json_serializable: ^6.8.0
 
   # Linting
   flutter_lints: ^4.0.0
-  custom_lint: ^0.6.7
-  riverpod_lint: ^2.3.13
 
   # Testing
   mocktail: ^1.0.4
 
 flutter:
   uses-material-design: true
-  fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter-Regular.ttf
-        - asset: assets/fonts/Inter-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Inter-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Inter-Bold.ttf
-          weight: 700
+  # fonts: uncomment after adding Inter font files to assets/fonts/
+  # - family: Inter
+  #   fonts:
+  #     - asset: assets/fonts/Inter-Regular.ttf
+  #     - asset: assets/fonts/Inter-Medium.ttf
+  #       weight: 500
+  #     - asset: assets/fonts/Inter-SemiBold.ttf
+  #       weight: 600
+  #     - asset: assets/fonts/Inter-Bold.ttf
+  #       weight: 700
 
   assets:
     - assets/images/

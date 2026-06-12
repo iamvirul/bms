@@ -66,3 +66,6 @@ macos/Flutter/ephemeral/
 
 # Test artifacts
 test/goldens/failures/
+
+windows
+macos

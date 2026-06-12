@@ -20,7 +20,7 @@ part 'app_router.g.dart';
 
 @riverpod
 GoRouter appRouter(Ref ref) {
-  final authState = ref.watch(authStateProvider);
+  final authState = ref.watch(currentAuthStateProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.login,
