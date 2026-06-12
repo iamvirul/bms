@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - run: flutter build windows --release
+
+      - name: Package
+        shell: pwsh
+        run: Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath bms-windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bms-windows
+          path: bms-windows.zip
+
+  build-macos:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - run: flutter build macos --release
+
+      - name: Package
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r --symlinks ../../../../../bms-macos.zip bms.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bms-macos
+          path: bms-macos.zip
+
+  build-web:
+    name: Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - run: flutter build web --release --no-wasm
+
+      - name: Package
+        run: zip -r bms-web.zip build/web
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bms-web
+          path: bms-web.zip
+
+  release:
+    name: Create GitHub Release
+    needs: [build-windows, build-macos, build-web]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            bms-windows/bms-windows.zip
+            bms-macos/bms-macos.zip
+            bms-web/bms-web.zip
+          generate_release_notes: true
