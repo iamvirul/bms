@@ -84,9 +84,9 @@ class AppDatabase extends _$AppDatabase {
   /// Seeds a developer account on fresh install.
   /// Credentials must be changed on first login.
   Future<void> _seedDeveloperAccount() async {
-    // Password hash for 'changeme' -- MUST be rotated on first login.
+    // Password: 'changeme' -- rotate immediately after first login.
     const devPasswordHash =
-        r'$2b$12$placeholder.hash.must.be.replaced.on.first.login';
+        r'$2a$12$7kmQLl6VU7/KXSR4mcySAuUaiH5J4hPyaXfgliVfiaZAZv0oy1QJK';
 
     await into(users).insertOnConflictUpdate(
       UsersCompanion.insert(
