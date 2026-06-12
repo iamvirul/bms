@@ -1,13 +1,11 @@
-name: Release
+name: Build
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [master, feat/**]
+  pull_request:
+    branches: [master]
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build-windows:
@@ -36,6 +34,7 @@ jobs:
         with:
           name: bms-windows
           path: bms-windows.zip
+          retention-days: 14
 
   build-macos:
     name: macOS
@@ -64,6 +63,7 @@ jobs:
         with:
           name: bms-macos
           path: bms-macos.zip
+          retention-days: 14
 
   build-web:
     name: Web
@@ -90,20 +90,4 @@ jobs:
         with:
           name: bms-web
           path: bms-web.zip
-
-  release:
-    name: Create GitHub Release
-    needs: [build-windows, build-macos, build-web]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-
-      - name: Publish release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            bms-windows/bms-windows.zip
-            bms-macos/bms-macos.zip
-            bms-web/bms-web.zip
-          generate_release_notes: true
+          retention-days: 14
