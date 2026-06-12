@@ -1,0 +1,68 @@
+# Dart/Flutter generated
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Build outputs
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+.packages
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+Thumbs.db
+
+# Environment - NEVER commit secrets
+.env
+.env.*
+!.env.example
+
+# SQLite dev databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+
+# Coverage
+coverage/
+lcov.info
+
+# iOS/Android generated files
+ios/Pods/
+android/.gradle/
+android/local.properties
+android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/gradle/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Windows
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake
+
+# macOS
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+
+# Test artifacts
+test/goldens/failures/
