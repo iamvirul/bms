@@ -55,6 +55,12 @@ class SidebarNav extends ConsumerWidget {
   static const List<_NavItemData> _navItems = [
     _NavItemData(label: 'Dashboard', icon: Icons.grid_view_rounded, route: AppRoutes.dashboard),
     _NavItemData(label: 'POS / Sales', icon: Icons.point_of_sale_rounded, route: AppRoutes.pos),
+    _NavItemData(
+      label: 'Invoices',
+      icon: Icons.receipt_long_rounded,
+      route: AppRoutes.invoices,
+      minRole: _Role.admin,
+    ),
     _NavItemData(label: 'Inventory', icon: Icons.inventory_2_rounded, route: AppRoutes.inventory),
     _NavItemData(label: 'Customers', icon: Icons.people_rounded, route: AppRoutes.customers),
     _NavItemData(

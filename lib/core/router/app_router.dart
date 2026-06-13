@@ -7,6 +7,7 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/cheques/presentation/cheque_screen.dart';
 import '../../features/customers/presentation/customers_screen.dart';
 import '../../features/debtors/presentation/debtors_screen.dart';
+import '../../features/invoices/presentation/invoices_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/inventory/presentation/inventory_screen.dart';
 import '../../features/petty_cash/presentation/petty_cash_screen.dart';
@@ -50,6 +51,11 @@ GoRouter appRouter(Ref ref) {
             path: AppRoutes.pos,
             name: 'pos',
             pageBuilder: (context, state) => _fadePage(state, const PosScreen()),
+          ),
+          GoRoute(
+            path: AppRoutes.invoices,
+            name: 'invoices',
+            pageBuilder: (context, state) => _fadePage(state, const InvoicesScreen()),
           ),
           GoRoute(
             path: AppRoutes.inventory,
@@ -127,6 +133,7 @@ abstract final class AppRoutes {
   static const String login = '/login';
   static const String dashboard = '/dashboard';
   static const String pos = '/pos';
+  static const String invoices = '/invoices';
   static const String inventory = '/inventory';
   static const String customers = '/customers';
   static const String debtors = '/debtors';
