@@ -56,7 +56,7 @@ class _ChequeScreenState extends ConsumerState<ChequeScreen> with SingleTickerPr
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Upcoming (7 days)'),
+            Tab(text: 'Upcoming'),
             Tab(text: 'By Month'),
           ],
         ),
@@ -103,13 +103,22 @@ class _ByMonthTab extends ConsumerWidget {
   final VoidCallback onPrev;
   final VoidCallback onNext;
 
+  static const _weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  static String _monthName(int month) => const [
+        '', 'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ][month];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chequesAsync = ref.watch(chequesMonthStreamProvider((monthDate.year, monthDate.month)));
+
     return Column(
       children: [
+        // Month nav header
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -122,17 +131,36 @@ class _ByMonthTab extends ConsumerWidget {
             ],
           ),
         ),
+        // Weekday header row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: _weekDays
+                .map((d) => Expanded(
+                      child: Center(
+                        child: Text(d,
+                            style: AppTextStyles.bodySmall
+                                .copyWith(fontWeight: FontWeight.w700)),
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+        const SizedBox(height: 4),
+        // Calendar grid
         Expanded(
           child: chequesAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text('Error: $e')),
             data: (cheques) {
-              if (cheques.isEmpty) {
-                return const Center(child: Text('No cheques for this month.', style: AppTextStyles.bodySmall));
+              // Group cheques by day-of-month
+              final byDay = <int, List<Cheque>>{};
+              for (final c in cheques) {
+                byDay.putIfAbsent(c.dueDate.day, () => []).add(c);
               }
-              return ListView.builder(
-                itemCount: cheques.length,
-                itemBuilder: (_, i) => _ChequeRow(cheque: cheques[i]),
+              return _CalendarGrid(
+                monthDate: monthDate,
+                byDay: byDay,
               );
             },
           ),
@@ -140,11 +168,183 @@ class _ByMonthTab extends ConsumerWidget {
       ],
     );
   }
+}
 
-  String _monthName(int month) => const [
-        '', 'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ][month];
+class _CalendarGrid extends StatelessWidget {
+  const _CalendarGrid({required this.monthDate, required this.byDay});
+  final DateTime monthDate;
+  final Map<int, List<Cheque>> byDay;
+
+  @override
+  Widget build(BuildContext context) {
+    final firstDay = DateTime(monthDate.year, monthDate.month, 1);
+    // weekday: Mon=1 … Sun=7. We want Mon at index 0.
+    final startOffset = firstDay.weekday - 1;
+    final daysInMonth = DateTime(monthDate.year, monthDate.month + 1, 0).day;
+    final today = DateTime.now();
+    final isCurrentMonth =
+        today.year == monthDate.year && today.month == monthDate.month;
+
+    // Total cells: pad start, then days
+    final totalCells = startOffset + daysInMonth;
+    final rows = (totalCells / 7).ceil();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        children: List.generate(rows, (row) {
+          return Expanded(
+            child: Row(
+              children: List.generate(7, (col) {
+                final cellIndex = row * 7 + col;
+                final dayNumber = cellIndex - startOffset + 1;
+                final isValid = dayNumber >= 1 && dayNumber <= daysInMonth;
+                final isToday = isCurrentMonth && isValid && dayNumber == today.day;
+                final dayCheques = isValid ? (byDay[dayNumber] ?? []) : <Cheque>[];
+
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: dayCheques.isEmpty
+                        ? null
+                        : () => _showDaySheet(context, dayNumber, dayCheques),
+                    child: Container(
+                      margin: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: isToday
+                            ? AppColors.primary.withAlpha(20)
+                            : dayCheques.isNotEmpty
+                                ? AppColors.warningLight
+                                : null,
+                        border: isToday
+                            ? Border.all(color: AppColors.primary, width: 1.5)
+                            : Border.all(
+                                color: dayCheques.isNotEmpty
+                                    ? AppColors.warning.withAlpha(80)
+                                    : Colors.grey.withAlpha(30),
+                                width: 0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: isValid
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '$dayNumber',
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    fontWeight: isToday
+                                        ? FontWeight.w700
+                                        : FontWeight.normal,
+                                    color: isToday ? AppColors.primary : null,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                if (dayCheques.isNotEmpty) ...[
+                                  const SizedBox(height: 2),
+                                  _ChequeDots(cheques: dayCheques),
+                                ],
+                              ],
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  void _showDaySheet(BuildContext context, int day, List<Cheque> cheques) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => _DayChequeSheet(day: day, monthDate: monthDate, cheques: cheques),
+    );
+  }
+}
+
+class _ChequeDots extends StatelessWidget {
+  const _ChequeDots({required this.cheques});
+  final List<Cheque> cheques;
+
+  @override
+  Widget build(BuildContext context) {
+    final received = cheques.where((c) => c.type == 'received').length;
+    final issued = cheques.where((c) => c.type == 'issued').length;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (received > 0)
+          Container(
+            width: 6,
+            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 1),
+            decoration: const BoxDecoration(
+              color: AppColors.success,
+              shape: BoxShape.circle,
+            ),
+          ),
+        if (issued > 0)
+          Container(
+            width: 6,
+            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 1),
+            decoration: const BoxDecoration(
+              color: AppColors.error,
+              shape: BoxShape.circle,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _DayChequeSheet extends ConsumerWidget {
+  const _DayChequeSheet({
+    required this.day,
+    required this.monthDate,
+    required this.cheques,
+  });
+  final int day;
+  final DateTime monthDate;
+  final List<Cheque> cheques;
+
+  static const _monthNames = [
+    '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (_, controller) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+            child: Text(
+              '$day ${_monthNames[monthDate.month]} ${monthDate.year}',
+              style: AppTextStyles.titleLarge,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              controller: controller,
+              itemCount: cheques.length,
+              itemBuilder: (_, i) => _ChequeRow(cheque: cheques[i]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ChequeRow extends ConsumerWidget {
