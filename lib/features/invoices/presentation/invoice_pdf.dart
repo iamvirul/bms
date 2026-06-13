@@ -23,8 +23,13 @@ abstract final class InvoicePdf {
   static const _white70 = PdfColor(1, 1, 1, 0.7);
   static const _white60 = PdfColor(1, 1, 1, 0.6);
 
-  static PdfColor _pdfColorWithAlpha(PdfColor c, double alpha) =>
-      PdfColor(c.red, c.green, c.blue, alpha);
+  static (PdfColor bg, PdfColor fg) _statusColors(String status) => switch (status) {
+        'paid'    => (const PdfColor.fromInt(0xFFE8F5E9), const PdfColor.fromInt(0xFF2E7D32)),
+        'partial' => (const PdfColor.fromInt(0xFFFFF8E1), const PdfColor.fromInt(0xFFF57F17)),
+        'void'    => (const PdfColor.fromInt(0xFFFFEBEE), _errorRed),
+        'open'    => (const PdfColor.fromInt(0xFFE3F2FD), const PdfColor.fromInt(0xFF0277BD)),
+        _         => (const PdfColor.fromInt(0xFFEEF2F7), _textSecondary),
+      };
 
   static Future<pw.Document> build({
     required Invoice invoice,
@@ -372,7 +377,7 @@ abstract final class InvoicePdf {
     Invoice invoice,
   ) {
     final methodLabel = _paymentLabel(invoice.paymentType);
-    final statusColor = _statusPdfColor(invoice.status);
+    final (statusBg, statusFg) = _statusColors(invoice.status);
 
     return pw.Row(
       children: [
@@ -396,12 +401,12 @@ abstract final class InvoicePdf {
         pw.Container(
           padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: pw.BoxDecoration(
-            color: _pdfColorWithAlpha(statusColor, 0.1),
+            color: statusBg,
             borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
           ),
           child: pw.Text(
             invoice.status.toUpperCase(),
-            style: pw.TextStyle(font: fontBold, fontSize: 9, color: statusColor),
+            style: pw.TextStyle(font: fontBold, fontSize: 9, color: statusFg),
           ),
         ),
       ],
@@ -488,11 +493,4 @@ abstract final class InvoicePdf {
         _ => type,
       };
 
-  static PdfColor _statusPdfColor(String status) => switch (status) {
-        'paid' => const PdfColor.fromInt(0xFF2E7D32),
-        'partial' => const PdfColor.fromInt(0xFFF9A825),
-        'void' => _errorRed,
-        'open' => const PdfColor.fromInt(0xFF0277BD),
-        _ => _textSecondary,
-      };
 }
