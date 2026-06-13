@@ -55,6 +55,9 @@ class _ChequeScreenState extends ConsumerState<ChequeScreen> with SingleTickerPr
         title: const Text('Cheques'),
         bottom: TabBar(
           controller: _tabController,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          indicatorColor: Colors.white,
           tabs: const [
             Tab(text: 'Upcoming'),
             Tab(text: 'By Month'),
