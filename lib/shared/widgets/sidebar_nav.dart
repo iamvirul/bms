@@ -36,7 +36,7 @@ class SidebarNav extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               children: _navItems
-                  .where((item) => !item.adminOnly || role != 'cashier')
+                  .where((item) => item.isVisibleFor(role))
                   .map((item) => _NavTile(
                         item: item,
                         isActive: currentLocation.startsWith(item.route),
@@ -53,50 +53,50 @@ class SidebarNav extends ConsumerWidget {
   }
 
   static const List<_NavItemData> _navItems = [
-    _NavItemData(
-      label: 'Dashboard',
-      icon: Icons.grid_view_rounded,
-      route: AppRoutes.dashboard,
-    ),
-    _NavItemData(
-      label: 'POS / Sales',
-      icon: Icons.point_of_sale_rounded,
-      route: AppRoutes.pos,
-    ),
-    _NavItemData(
-      label: 'Inventory',
-      icon: Icons.inventory_2_rounded,
-      route: AppRoutes.inventory,
-    ),
-    _NavItemData(
-      label: 'Customers',
-      icon: Icons.people_rounded,
-      route: AppRoutes.customers,
-    ),
+    _NavItemData(label: 'Dashboard', icon: Icons.grid_view_rounded, route: AppRoutes.dashboard),
+    _NavItemData(label: 'POS / Sales', icon: Icons.point_of_sale_rounded, route: AppRoutes.pos),
+    _NavItemData(label: 'Inventory', icon: Icons.inventory_2_rounded, route: AppRoutes.inventory),
+    _NavItemData(label: 'Customers', icon: Icons.people_rounded, route: AppRoutes.customers),
     _NavItemData(
       label: 'Suppliers',
       icon: Icons.local_shipping_rounded,
       route: AppRoutes.suppliers,
-      adminOnly: true,
+      minRole: _Role.admin,
     ),
     _NavItemData(
       label: 'Cheques',
       icon: Icons.account_balance_rounded,
       route: AppRoutes.cheques,
+      minRole: _Role.admin,
     ),
     _NavItemData(
       label: 'Petty Cash',
       icon: Icons.account_balance_wallet_rounded,
       route: AppRoutes.pettyCash,
+      minRole: _Role.admin,
     ),
     _NavItemData(
       label: 'Reports',
       icon: Icons.bar_chart_rounded,
       route: AppRoutes.reports,
-      adminOnly: true,
+      minRole: _Role.admin,
+    ),
+    _NavItemData(
+      label: 'Users',
+      icon: Icons.manage_accounts_rounded,
+      route: AppRoutes.users,
+      minRole: _Role.developer,
     ),
   ];
 }
+
+enum _Role { cashier, admin, developer }
+
+_Role _parseRole(String r) => switch (r) {
+      'developer' => _Role.developer,
+      'admin' => _Role.admin,
+      _ => _Role.cashier,
+    };
 
 class _Header extends StatelessWidget {
   @override
@@ -262,11 +262,13 @@ class _NavItemData {
     required this.label,
     required this.icon,
     required this.route,
-    this.adminOnly = false,
+    this.minRole = _Role.cashier,
   });
 
   final String label;
   final IconData icon;
   final String route;
-  final bool adminOnly;
+  final _Role minRole;
+
+  bool isVisibleFor(String roleStr) => _parseRole(roleStr).index >= minRole.index;
 }

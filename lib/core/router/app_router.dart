@@ -12,6 +12,7 @@ import '../../features/petty_cash/presentation/petty_cash_screen.dart';
 import '../../features/pos/presentation/pos_screen.dart';
 import '../../features/reports/presentation/reports_screen.dart';
 import '../../features/suppliers/presentation/suppliers_screen.dart';
+import '../../features/users/presentation/users_screen.dart';
 import '../../providers/auth_provider.dart';
 import '../../shared/widgets/app_scaffold.dart';
 import 'route_guard.dart';
@@ -78,6 +79,11 @@ GoRouter appRouter(Ref ref) {
             name: 'reports',
             pageBuilder: (context, state) => _fadePage(state, const ReportsScreen()),
           ),
+          GoRoute(
+            path: AppRoutes.users,
+            name: 'users',
+            pageBuilder: (context, state) => _fadePage(state, const UsersScreen()),
+          ),
         ],
       ),
     ],
@@ -115,4 +121,5 @@ abstract final class AppRoutes {
   static const String cheques = '/cheques';
   static const String pettyCash = '/petty-cash';
   static const String reports = '/reports';
+  static const String users = '/users';
 }
