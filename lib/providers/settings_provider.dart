@@ -4,13 +4,13 @@ import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/database/app_database.dart';
 import '../features/auth/domain/auth_state.dart';
 import 'auth_provider.dart';
 import 'database_provider.dart';
+
 
 const _langKey = 'app_language';
 
@@ -19,15 +19,13 @@ class LanguageNotifier extends Notifier<String> {
   String build() => 'en';
 
   Future<void> load() async {
-    const storage = FlutterSecureStorage();
-    final saved = await storage.read(key: _langKey);
+    final saved = await ref.read(secureStorageProvider).read(key: _langKey);
     if (saved != null) state = saved;
   }
 
   Future<void> set(String code) async {
     state = code;
-    const storage = FlutterSecureStorage();
-    await storage.write(key: _langKey, value: code);
+    await ref.read(secureStorageProvider).write(key: _langKey, value: code);
   }
 }
 
