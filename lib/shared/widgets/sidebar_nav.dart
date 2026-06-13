@@ -87,6 +87,12 @@ class SidebarNav extends ConsumerWidget {
       route: AppRoutes.users,
       minRole: _Role.developer,
     ),
+    _NavItemData(
+      label: 'Settings',
+      icon: Icons.settings_rounded,
+      route: AppRoutes.settings,
+      minRole: _Role.admin,
+    ),
   ];
 }
 

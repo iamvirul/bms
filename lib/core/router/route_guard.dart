@@ -14,6 +14,10 @@ abstract final class RouteGuard {
     AppRoutes.users,
   };
 
+  static const Set<String> _adminAndAboveOnlyRoutes = {
+    AppRoutes.settings,
+  };
+
   static const Set<String> _adminAndAboveRoutes = {
     AppRoutes.suppliers,
     AppRoutes.cheques,
@@ -49,6 +53,10 @@ abstract final class RouteGuard {
     }
 
     if (_adminAndAboveRoutes.contains(location) && role == 'cashier') {
+      return AppRoutes.dashboard;
+    }
+
+    if (_adminAndAboveOnlyRoutes.contains(location) && role == 'cashier') {
       return AppRoutes.dashboard;
     }
 
