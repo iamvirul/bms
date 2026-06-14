@@ -1,14 +1,20 @@
+import 'package:bms/core/router/app_router.dart';
+import 'package:bms/core/theme/app_colors.dart';
+import 'package:bms/shared/widgets/sidebar_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/router/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import 'sidebar_nav.dart';
-
-class AppScaffold extends StatelessWidget {
+class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key, required this.child});
 
   final Widget child;
+
+  @override
+  State<AppScaffold> createState() => _AppScaffoldState();
+}
+
+class _AppScaffoldState extends State<AppScaffold> {
+  bool _collapsed = true; // default: icon-only
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +25,13 @@ class AppScaffold extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Row(
         children: [
-          if (isWide) SidebarNav(currentLocation: location),
-          Expanded(
-            child: ClipRect(child: child),
-          ),
+          if (isWide)
+            SidebarNav(
+              currentLocation: location,
+              collapsed: _collapsed,
+              onToggle: () => setState(() => _collapsed = !_collapsed),
+            ),
+          Expanded(child: ClipRect(child: widget.child)),
         ],
       ),
       bottomNavigationBar: isWide ? null : _BottomNav(currentLocation: location),
