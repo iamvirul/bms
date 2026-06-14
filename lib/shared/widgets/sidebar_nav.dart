@@ -57,36 +57,28 @@ class SidebarNav extends ConsumerWidget {
       width: collapsed ? _kCollapsedWidth : _kExpandedWidth,
       color: _kSidebarBg,
       child: ClipRect(
-        child: OverflowBox(
-          alignment: Alignment.centerLeft,
-          minWidth: _kCollapsedWidth,
-          maxWidth: _kExpandedWidth,
-          child: SizedBox(
-            width: _kExpandedWidth,
-            child: Column(
-              children: [
-                _Header(collapsed: collapsed),
-                const Divider(color: _kSidebarDivider, height: 1),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    children: _navItems
-                        .where((item) => item.isVisibleFor(role))
-                        .map((item) => _NavTile(
-                              item: item,
-                              isActive: currentLocation.startsWith(item.route),
-                              collapsed: collapsed,
-                              onTap: () => context.go(item.route),
-                            ))
-                        .toList(),
-                  ),
-                ),
-                const Divider(color: _kSidebarDivider, height: 1),
-                if (user != null) _UserFooter(user: user, ref: ref, collapsed: collapsed),
-                _ToggleButton(collapsed: collapsed, onToggle: onToggle),
-              ],
+        child: Column(
+          children: [
+            _Header(collapsed: collapsed),
+            const Divider(color: _kSidebarDivider, height: 1),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: _navItems
+                    .where((item) => item.isVisibleFor(role))
+                    .map((item) => _NavTile(
+                          item: item,
+                          isActive: currentLocation.startsWith(item.route),
+                          collapsed: collapsed,
+                          onTap: () => context.go(item.route),
+                        ))
+                    .toList(),
+              ),
             ),
-          ),
+            const Divider(color: _kSidebarDivider, height: 1),
+            if (user != null) _UserFooter(user: user, ref: ref, collapsed: collapsed),
+            _ToggleButton(collapsed: collapsed, onToggle: onToggle),
+          ],
         ),
       ),
     );
@@ -196,7 +188,6 @@ class _NavTileState extends State<_NavTile> {
             child: widget.collapsed
                 ? SizedBox(
                     height: 40,
-                    width: double.infinity,
                     child: Center(
                       child: Icon(
                         widget.item.icon,
