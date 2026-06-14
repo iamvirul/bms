@@ -149,24 +149,24 @@ abstract final class ReceiptPdf {
               children: [
                 pw.Expanded(
                   child: pw.Text('Item',
-                      style: pw.TextStyle(font: fontBold, fontSize: 7)),
+                      style: pw.TextStyle(font: fontBold, fontSize: 6.5)),
                 ),
                 pw.SizedBox(
                   width: 20,
                   child: pw.Text('Qty',
-                      style: pw.TextStyle(font: fontBold, fontSize: 7),
+                      style: pw.TextStyle(font: fontBold, fontSize: 6.5),
                       textAlign: pw.TextAlign.right),
                 ),
                 pw.SizedBox(
                   width: 30,
                   child: pw.Text('Price',
-                      style: pw.TextStyle(font: fontBold, fontSize: 7),
+                      style: pw.TextStyle(font: fontBold, fontSize: 6.5),
                       textAlign: pw.TextAlign.right),
                 ),
                 pw.SizedBox(
                   width: 34,
                   child: pw.Text('Amt',
-                      style: pw.TextStyle(font: fontBold, fontSize: 7),
+                      style: pw.TextStyle(font: fontBold, fontSize: 6.5),
                       textAlign: pw.TextAlign.right),
                 ),
               ],
@@ -277,26 +277,26 @@ class _ItemRow extends pw.StatelessWidget {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(item.product.name,
-              style: pw.TextStyle(font: fontBold, fontSize: 7), maxLines: 2),
+              style: pw.TextStyle(font: fontBold, fontSize: 6.5), maxLines: 2),
           pw.Row(
             children: [
               pw.Expanded(child: pw.SizedBox()),
               pw.SizedBox(
                 width: 20,
                 child: pw.Text(qtyStr,
-                    style: pw.TextStyle(font: font, fontSize: 7),
+                    style: pw.TextStyle(font: font, fontSize: 6.5),
                     textAlign: pw.TextAlign.right),
               ),
               pw.SizedBox(
                 width: 30,
                 child: pw.Text(ReceiptPdf._f(item.unitPrice),
-                    style: pw.TextStyle(font: font, fontSize: 7),
+                    style: pw.TextStyle(font: font, fontSize: 6.5),
                     textAlign: pw.TextAlign.right),
               ),
               pw.SizedBox(
                 width: 34,
                 child: pw.Text(ReceiptPdf._f(item.lineTotal),
-                    style: pw.TextStyle(font: fontBold, fontSize: 7),
+                    style: pw.TextStyle(font: fontBold, fontSize: 6.5),
                     textAlign: pw.TextAlign.right),
               ),
             ],

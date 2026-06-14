@@ -80,10 +80,10 @@ void main() async {
 
           // Column headers
           pw.Row(children: [
-            pw.Expanded(child: pw.Text('Item', style: pw.TextStyle(font: fontBold, fontSize: 7))),
-            pw.SizedBox(width: 20, child: pw.Text('Qty', style: pw.TextStyle(font: fontBold, fontSize: 7), textAlign: pw.TextAlign.right)),
-            pw.SizedBox(width: 30, child: pw.Text('Price', style: pw.TextStyle(font: fontBold, fontSize: 7), textAlign: pw.TextAlign.right)),
-            pw.SizedBox(width: 34, child: pw.Text('Amt', style: pw.TextStyle(font: fontBold, fontSize: 7), textAlign: pw.TextAlign.right)),
+            pw.Expanded(child: pw.Text('Item', style: pw.TextStyle(font: fontBold, fontSize: 6.5))),
+            pw.SizedBox(width: 20, child: pw.Text('Qty', style: pw.TextStyle(font: fontBold, fontSize: 6.5), textAlign: pw.TextAlign.right)),
+            pw.SizedBox(width: 30, child: pw.Text('Price', style: pw.TextStyle(font: fontBold, fontSize: 6.5), textAlign: pw.TextAlign.right)),
+            pw.SizedBox(width: 34, child: pw.Text('Amt', style: pw.TextStyle(font: fontBold, fontSize: 6.5), textAlign: pw.TextAlign.right)),
           ]),
           pw.SizedBox(height: 3),
           _dashed(),
@@ -94,12 +94,12 @@ void main() async {
             pw.Padding(
               padding: const pw.EdgeInsets.only(bottom: 4),
               child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                pw.Text(item.name, style: pw.TextStyle(font: fontBold, fontSize: 7), maxLines: 2),
+                pw.Text(item.name, style: pw.TextStyle(font: fontBold, fontSize: 6.5), maxLines: 2),
                 pw.Row(children: [
                   pw.Expanded(child: pw.SizedBox()),
-                  pw.SizedBox(width: 20, child: pw.Text('${item.qty}', style: pw.TextStyle(font: font, fontSize: 7), textAlign: pw.TextAlign.right)),
-                  pw.SizedBox(width: 30, child: pw.Text(_f(item.price), style: pw.TextStyle(font: font, fontSize: 7), textAlign: pw.TextAlign.right)),
-                  pw.SizedBox(width: 34, child: pw.Text(_f(item.qty * item.price), style: pw.TextStyle(font: fontBold, fontSize: 7), textAlign: pw.TextAlign.right)),
+                  pw.SizedBox(width: 20, child: pw.Text('${item.qty}', style: pw.TextStyle(font: font, fontSize: 6.5), textAlign: pw.TextAlign.right)),
+                  pw.SizedBox(width: 30, child: pw.Text(_f(item.price), style: pw.TextStyle(font: font, fontSize: 6.5), textAlign: pw.TextAlign.right)),
+                  pw.SizedBox(width: 34, child: pw.Text(_f(item.qty * item.price), style: pw.TextStyle(font: fontBold, fontSize: 6.5), textAlign: pw.TextAlign.right)),
                 ]),
               ]),
             ),
