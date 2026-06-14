@@ -30,6 +30,13 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
+          // Store info (admin+)
+          if (isAdmin) ...[
+            _SectionHeader(title: 'Store Info', icon: Icons.store_outlined),
+            const _StoreInfoTile(),
+            const SizedBox(height: 24),
+          ],
+
           // Language
           _SectionHeader(title: 'Language', icon: Icons.language_outlined),
           const _LanguageTile(),
@@ -207,6 +214,123 @@ class SettingsScreen extends ConsumerWidget {
         SnackBar(content: Text('Save failed: $e'), backgroundColor: AppColors.error),
       );
     }
+  }
+}
+
+// Store info tile
+
+class _StoreInfoTile extends ConsumerStatefulWidget {
+  const _StoreInfoTile();
+
+  @override
+  ConsumerState<_StoreInfoTile> createState() => _StoreInfoTileState();
+}
+
+class _StoreInfoTileState extends ConsumerState<_StoreInfoTile> {
+  late final TextEditingController _nameCtrl;
+  late final TextEditingController _addressCtrl;
+  late final TextEditingController _phoneCtrl;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final info = ref.read(storeInfoProvider);
+    _nameCtrl = TextEditingController(text: info.name);
+    _addressCtrl = TextEditingController(text: info.address);
+    _phoneCtrl = TextEditingController(text: info.phone);
+    // Load persisted values then sync controllers
+    ref.read(storeInfoProvider.notifier).load().then((_) {
+      if (!mounted) return;
+      final loaded = ref.read(storeInfoProvider);
+      _nameCtrl.text = loaded.name;
+      _addressCtrl.text = loaded.address;
+      _phoneCtrl.text = loaded.phone;
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _addressCtrl.dispose();
+    _phoneCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    await ref.read(storeInfoProvider.notifier).save(
+          name: _nameCtrl.text.trim(),
+          address: _addressCtrl.text.trim(),
+          phone: _phoneCtrl.text.trim(),
+        );
+    if (!mounted) return;
+    setState(() => _saving = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Store info saved'),
+        backgroundColor: AppColors.success,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            controller: _nameCtrl,
+            decoration: const InputDecoration(
+              labelText: 'Store Name',
+              hintText: 'e.g. My Shop',
+              prefixIcon: Icon(Icons.storefront_outlined),
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _addressCtrl,
+            decoration: const InputDecoration(
+              labelText: 'Address',
+              hintText: 'e.g. 123 Main St, Colombo',
+              prefixIcon: Icon(Icons.location_on_outlined),
+              isDense: true,
+            ),
+            maxLines: 2,
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _phoneCtrl,
+            decoration: const InputDecoration(
+              labelText: 'Phone',
+              hintText: 'e.g. 077 123 4567',
+              prefixIcon: Icon(Icons.phone_outlined),
+              isDense: true,
+            ),
+            keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            icon: _saving
+                ? const SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.save_outlined, size: 18),
+            label: Text(_saving ? 'Saving...' : 'Save Store Info'),
+            onPressed: _saving ? null : _save,
+          ),
+        ],
+      ),
+    );
   }
 }
 

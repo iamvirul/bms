@@ -13,6 +13,56 @@ import 'database_provider.dart';
 
 
 const _langKey = 'app_language';
+const _storeNameKey = 'store_name';
+const _storeAddressKey = 'store_address';
+const _storePhoneKey = 'store_phone';
+
+// ── Store info ────────────────────────────────────────────────────────────────
+
+class StoreInfo {
+  const StoreInfo({
+    this.name = 'BMS Store',
+    this.address = '',
+    this.phone = '',
+  });
+  final String name;
+  final String address;
+  final String phone;
+}
+
+class StoreInfoNotifier extends Notifier<StoreInfo> {
+  @override
+  StoreInfo build() {
+    Future.microtask(load);
+    return const StoreInfo();
+  }
+
+  Future<void> load() async {
+    final s = ref.read(secureStorageProvider);
+    state = StoreInfo(
+      name: (await s.read(key: _storeNameKey)) ?? 'BMS Store',
+      address: (await s.read(key: _storeAddressKey)) ?? '',
+      phone: (await s.read(key: _storePhoneKey)) ?? '',
+    );
+  }
+
+  Future<void> save({
+    required String name,
+    required String address,
+    required String phone,
+  }) async {
+    final s = ref.read(secureStorageProvider);
+    await Future.wait([
+      s.write(key: _storeNameKey, value: name),
+      s.write(key: _storeAddressKey, value: address),
+      s.write(key: _storePhoneKey, value: phone),
+    ]);
+    state = StoreInfo(name: name, address: address, phone: phone);
+  }
+}
+
+final storeInfoProvider =
+    NotifierProvider<StoreInfoNotifier, StoreInfo>(StoreInfoNotifier.new);
 
 class LanguageNotifier extends Notifier<String> {
   @override
