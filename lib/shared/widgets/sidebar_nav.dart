@@ -119,50 +119,55 @@ class _Header extends StatelessWidget {
   const _Header({required this.collapsed});
   final bool collapsed;
 
+  static const _logo = BoxDecoration(
+    color: _kSidebarAccent,
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(collapsed ? 0 : 20, 16, collapsed ? 0 : 20, 14),
-      child: collapsed
-          ? Center(
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: _kSidebarAccent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
-              ),
-            )
-          : Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: _kSidebarAccent,
-                    borderRadius: BorderRadius.circular(8),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 120;
+        return Padding(
+          padding: EdgeInsets.fromLTRB(narrow ? 0 : 20, 16, narrow ? 0 : 20, 14),
+          child: narrow
+              ? Center(
+                  child: Container(
+                    width: 32, height: 32,
+                    decoration: _logo,
+                    child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
                   ),
-                  child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
-                ),
-                const SizedBox(width: 10),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                )
+              : Row(
                   children: [
-                    Text('BMS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
-                        )),
-                    Text('Business Manager',
-                        style: TextStyle(color: _kSidebarText, fontSize: 11)),
+                    Container(
+                      width: 32, height: 32,
+                      decoration: _logo,
+                      child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text('BMS',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                              )),
+                          Text('Business Manager',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: _kSidebarText, fontSize: 11)),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
+        );
+      },
     );
   }
 }
@@ -288,45 +293,49 @@ class _UserFooter extends StatelessWidget {
       ),
     );
 
-    if (collapsed) {
-      return Tooltip(
-        message: '${user.name}  (${user.role})',
-        preferBelow: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Center(child: avatar),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          avatar,
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(user.name,
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w500),
-                    overflow: TextOverflow.ellipsis),
-                Text(user.role.toUpperCase(),
-                    style: const TextStyle(color: _kSidebarText, fontSize: 10.5)),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 120;
+        if (narrow) {
+          return Tooltip(
+            message: '${user.name}  (${user.role})',
+            preferBelow: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Center(child: avatar),
             ),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              avatar,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(user.name,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis),
+                    Text(user.role.toUpperCase(),
+                        style: const TextStyle(color: _kSidebarText, fontSize: 10.5)),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.logout_rounded, size: 16, color: _kSidebarText),
+                tooltip: 'Sign out',
+                onPressed: () => ref.read(authStateProvider.notifier).logout(),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, size: 16, color: _kSidebarText),
-            tooltip: 'Sign out',
-            onPressed: () => ref.read(authStateProvider.notifier).logout(),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
