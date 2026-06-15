@@ -571,7 +571,7 @@ class _AddChequeSheetState extends ConsumerState<_AddChequeSheet> {
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       value: _type,
-                      decoration: const InputDecoration(labelText: 'Type', isDense: true),
+                      decoration: const InputDecoration(labelText: 'Type'),
                       items: const [
                         DropdownMenuItem(value: 'received', child: Text('Received')),
                         DropdownMenuItem(value: 'issued', child: Text('Issued')),
@@ -583,7 +583,7 @@ class _AddChequeSheetState extends ConsumerState<_AddChequeSheet> {
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       value: _partyType,
-                      decoration: const InputDecoration(labelText: 'Party Type', isDense: true),
+                      decoration: const InputDecoration(labelText: 'Party Type'),
                       items: const [
                         DropdownMenuItem(value: 'customer', child: Text('Customer')),
                         DropdownMenuItem(value: 'supplier', child: Text('Supplier')),
@@ -597,13 +597,13 @@ class _AddChequeSheetState extends ConsumerState<_AddChequeSheet> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _partyName,
-                decoration: const InputDecoration(labelText: 'Party Name *', isDense: true),
+                decoration: const InputDecoration(labelText: 'Party Name *'),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _amount,
-                decoration: const InputDecoration(labelText: 'Amount *', prefixText: 'Rs. ', isDense: true),
+                decoration: const InputDecoration(labelText: 'Amount *', prefixText: 'Rs. '),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Required';
@@ -615,7 +615,7 @@ class _AddChequeSheetState extends ConsumerState<_AddChequeSheet> {
               GestureDetector(
                 onTap: _pickDate,
                 child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Due Date *', isDense: true),
+                  decoration: const InputDecoration(labelText: 'Due Date *'),
                   child: Text(
                     _dueDate != null ? BmsDateUtils.formatDate(_dueDate!) : 'Tap to select',
                     style: _dueDate != null ? AppTextStyles.bodyMedium : AppTextStyles.bodySmall,
@@ -628,14 +628,14 @@ class _AddChequeSheetState extends ConsumerState<_AddChequeSheet> {
                   Expanded(
                     child: TextFormField(
                       controller: _chequeNo,
-                      decoration: const InputDecoration(labelText: 'Cheque No.', isDense: true),
+                      decoration: const InputDecoration(labelText: 'Cheque No.'),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextFormField(
                       controller: _bank,
-                      decoration: const InputDecoration(labelText: 'Bank', isDense: true),
+                      decoration: const InputDecoration(labelText: 'Bank'),
                     ),
                   ),
                 ],
@@ -643,7 +643,7 @@ class _AddChequeSheetState extends ConsumerState<_AddChequeSheet> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _notes,
-                decoration: const InputDecoration(labelText: 'Notes', isDense: true),
+                decoration: const InputDecoration(labelText: 'Notes'),
               ),
               const SizedBox(height: 24),
               ElevatedButton(

@@ -158,8 +158,7 @@ class _SupplierPickerSheetState extends ConsumerState<_SupplierPickerSheet> {
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.search, size: 18),
               hintText: 'Search...',
-              isDense: true,
-            ),
+                          ),
             onChanged: (v) => setState(() => _q = v.toLowerCase()),
           ),
           const SizedBox(height: 8),
@@ -274,8 +273,7 @@ class _ProductPickerSheetState extends ConsumerState<_ProductPickerSheet> {
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.search, size: 18),
               hintText: 'Search product...',
-              isDense: true,
-            ),
+                          ),
             onChanged: (v) => setState(() => _q = v.toLowerCase()),
           ),
           const SizedBox(height: 8),
@@ -364,7 +362,7 @@ class _GrnItemRowState extends ConsumerState<_GrnItemRow> {
               child: TextField(
                 controller: _qtyCtrl,
                 decoration: const InputDecoration(
-                    labelText: 'Qty', isDense: true, contentPadding: EdgeInsets.all(6)),
+                    labelText: 'Qty', contentPadding: EdgeInsets.all(6)),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
                 onChanged: (v) =>
@@ -377,7 +375,7 @@ class _GrnItemRowState extends ConsumerState<_GrnItemRow> {
               child: TextField(
                 controller: _priceCtrl,
                 decoration: const InputDecoration(
-                    labelText: 'Cost', isDense: true, contentPadding: EdgeInsets.all(6)),
+                    labelText: 'Cost', contentPadding: EdgeInsets.all(6)),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
                 onChanged: (v) =>

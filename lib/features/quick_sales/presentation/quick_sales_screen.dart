@@ -219,8 +219,7 @@ class _QuickSaleSheetState extends ConsumerState<_QuickSaleSheet> {
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.search, size: 18),
                   hintText: 'Search product...',
-                  isDense: true,
-                ),
+                                  ),
                 onChanged: (v) => setState(() => _search = v.toLowerCase()),
               ),
               const SizedBox(height: 8),
@@ -290,7 +289,7 @@ class _QuickSaleSheetState extends ConsumerState<_QuickSaleSheet> {
                       controller: _qtyCtrl,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
-                      decoration: const InputDecoration(labelText: 'Qty', isDense: true),
+                      decoration: const InputDecoration(labelText: 'Qty'),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -299,7 +298,7 @@ class _QuickSaleSheetState extends ConsumerState<_QuickSaleSheet> {
                       controller: _priceCtrl,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
-                      decoration: const InputDecoration(labelText: 'Price', prefixText: 'Rs. ', isDense: true),
+                      decoration: const InputDecoration(labelText: 'Price', prefixText: 'Rs. '),
                     ),
                   ),
                 ],
@@ -307,7 +306,7 @@ class _QuickSaleSheetState extends ConsumerState<_QuickSaleSheet> {
               const SizedBox(height: 12),
               TextField(
                 controller: _notesCtrl,
-                decoration: const InputDecoration(labelText: 'Notes (optional)', isDense: true),
+                decoration: const InputDecoration(labelText: 'Notes (optional)'),
               ),
               const SizedBox(height: 20),
               SizedBox(

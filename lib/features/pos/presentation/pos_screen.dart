@@ -104,8 +104,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                                     },
                                   )
                                 : null,
-                            isDense: true,
-                          ),
+                                                      ),
                           onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
                           onSubmitted: _onSubmitSearch,
                         ),
@@ -627,8 +626,7 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                   decoration: const InputDecoration(
                     labelText: 'Amount Received',
                     prefixText: 'Rs. ',
-                    isDense: true,
-                  ),
+                                      ),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
                   onChanged: (v) {
@@ -744,8 +742,7 @@ class _CustomerSearchDialogState extends ConsumerState<_CustomerSearchDialog> {
                 decoration: const InputDecoration(
                   hintText: 'Search customers...',
                   prefixIcon: Icon(Icons.search),
-                  isDense: true,
-                ),
+                                  ),
                 onChanged: (v) => setState(() => _query = v.toLowerCase()),
               ),
             ),

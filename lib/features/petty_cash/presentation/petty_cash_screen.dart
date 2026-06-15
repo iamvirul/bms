@@ -412,7 +412,7 @@ class _AddEntrySheetState extends ConsumerState<_AddEntrySheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _description,
-              decoration: const InputDecoration(labelText: 'Description *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Description *'),
               validator: (v) =>
                   v == null || v.trim().isEmpty ? 'Required' : null,
             ),
@@ -423,7 +423,7 @@ class _AddEntrySheetState extends ConsumerState<_AddEntrySheet> {
                   child: TextFormField(
                     controller: _amount,
                     decoration: const InputDecoration(
-                        labelText: 'Amount *', prefixText: 'Rs. ', isDense: true),
+                        labelText: 'Amount *', prefixText: 'Rs. '),
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     validator: (v) {
@@ -438,7 +438,7 @@ class _AddEntrySheetState extends ConsumerState<_AddEntrySheet> {
                   child: DropdownButtonFormField<String>(
                     value: _type,
                     decoration:
-                        const InputDecoration(labelText: 'Type *', isDense: true),
+                        const InputDecoration(labelText: 'Type *'),
                     items: const [
                       DropdownMenuItem(value: 'out', child: Text('Out (Expense)')),
                       DropdownMenuItem(value: 'in', child: Text('In (Income)')),
@@ -452,7 +452,7 @@ class _AddEntrySheetState extends ConsumerState<_AddEntrySheet> {
             DropdownButtonFormField<String>(
               value: _category,
               decoration:
-                  const InputDecoration(labelText: 'Category *', isDense: true),
+                  const InputDecoration(labelText: 'Category *'),
               items: _categories
                   .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                   .toList(),

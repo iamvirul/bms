@@ -259,7 +259,7 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Product Name *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Product Name *'),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
             ),
             const SizedBox(height: 12),
@@ -268,14 +268,14 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
                 Expanded(
                   child: TextFormField(
                     controller: _brand,
-                    decoration: const InputDecoration(labelText: 'Brand', isDense: true),
+                    decoration: const InputDecoration(labelText: 'Brand'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     controller: _barcode,
-                    decoration: const InputDecoration(labelText: 'Barcode', isDense: true),
+                    decoration: const InputDecoration(labelText: 'Barcode'),
                   ),
                 ),
               ],
@@ -286,7 +286,7 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     value: _unitType,
-                    decoration: const InputDecoration(labelText: 'Unit Type *', isDense: true),
+                    decoration: const InputDecoration(labelText: 'Unit Type *'),
                     items: const [
                       DropdownMenuItem(value: 'pcs', child: Text('Pieces')),
                       DropdownMenuItem(value: 'kg', child: Text('Kg')),
@@ -302,7 +302,7 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
                 Expanded(
                   child: TextFormField(
                     controller: _reorderLevel,
-                    decoration: const InputDecoration(labelText: 'Reorder Level', isDense: true),
+                    decoration: const InputDecoration(labelText: 'Reorder Level'),
                     keyboardType: TextInputType.number,
                   ),
                 ),
@@ -314,7 +314,7 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
                 Expanded(
                   child: TextFormField(
                     controller: _costPrice,
-                    decoration: const InputDecoration(labelText: 'Cost Price *', prefixText: 'Rs. ', isDense: true),
+                    decoration: const InputDecoration(labelText: 'Cost Price *', prefixText: 'Rs. '),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return 'Required';
@@ -327,7 +327,7 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
                 Expanded(
                   child: TextFormField(
                     controller: _sellPrice,
-                    decoration: const InputDecoration(labelText: 'Sell Price *', prefixText: 'Rs. ', isDense: true),
+                    decoration: const InputDecoration(labelText: 'Sell Price *', prefixText: 'Rs. '),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) return 'Required';
@@ -342,7 +342,7 @@ class _ProductFormSheetState extends ConsumerState<_ProductFormSheet> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _stockQty,
-                decoration: const InputDecoration(labelText: 'Stock Qty', isDense: true),
+                decoration: const InputDecoration(labelText: 'Stock Qty'),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
             ],

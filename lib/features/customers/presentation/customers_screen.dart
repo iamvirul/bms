@@ -229,19 +229,19 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Name *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Name *'),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _phone,
-              decoration: const InputDecoration(labelText: 'Phone', isDense: true),
+              decoration: const InputDecoration(labelText: 'Phone'),
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _address,
-              decoration: const InputDecoration(labelText: 'Address', isDense: true),
+              decoration: const InputDecoration(labelText: 'Address'),
               maxLines: 2,
             ),
             const SizedBox(height: 24),
@@ -318,7 +318,7 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _amount,
-              decoration: const InputDecoration(labelText: 'Amount *', prefixText: 'Rs. ', isDense: true),
+              decoration: const InputDecoration(labelText: 'Amount *', prefixText: 'Rs. '),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Required';
@@ -329,7 +329,7 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               value: _method,
-              decoration: const InputDecoration(labelText: 'Payment Method', isDense: true),
+              decoration: const InputDecoration(labelText: 'Payment Method'),
               items: const [
                 DropdownMenuItem(value: 'cash', child: Text('Cash')),
                 DropdownMenuItem(value: 'bank', child: Text('Bank Transfer')),
@@ -340,7 +340,7 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _notes,
-              decoration: const InputDecoration(labelText: 'Notes', isDense: true),
+              decoration: const InputDecoration(labelText: 'Notes'),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
