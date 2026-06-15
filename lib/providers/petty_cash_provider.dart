@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -53,6 +54,7 @@ class PettyCashActions {
     required double amount,
     required String type,
     required String category,
+    String? receiptPhotoPath,
   }) async {
     final id = _uuid.v7();
     await _ref.read(pettyCashDaoProvider).insert(PettyCashCompanion.insert(
@@ -62,6 +64,7 @@ class PettyCashActions {
           type: type,
           category: category,
           userId: _userId,
+          receiptPhotoPath: Value(receiptPhotoPath),
         ));
     await _ref.read(auditLogDaoProvider).log(
           id: _uuid.v7(),
