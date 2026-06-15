@@ -40,6 +40,8 @@ class SidebarNav extends ConsumerWidget {
     _NavItemData(label: 'Suppliers', icon: Icons.local_shipping_rounded, route: AppRoutes.suppliers, minRole: _Role.admin),
     _NavItemData(label: 'Cheques', icon: Icons.account_balance_rounded, route: AppRoutes.cheques, minRole: _Role.admin),
     _NavItemData(label: 'Petty Cash', icon: Icons.account_balance_wallet_rounded, route: AppRoutes.pettyCash, minRole: _Role.admin),
+    _NavItemData(label: 'Quick Sales', icon: Icons.flash_on_rounded, route: AppRoutes.quickSales, minRole: _Role.admin),
+    _NavItemData(label: 'GRN', icon: Icons.move_to_inbox_rounded, route: AppRoutes.grn, minRole: _Role.admin),
     _NavItemData(label: 'Reports', icon: Icons.bar_chart_rounded, route: AppRoutes.reports, minRole: _Role.admin),
     _NavItemData(label: 'Users', icon: Icons.manage_accounts_rounded, route: AppRoutes.users, minRole: _Role.developer),
     _NavItemData(label: 'Settings', icon: Icons.settings_rounded, route: AppRoutes.settings, minRole: _Role.admin),
