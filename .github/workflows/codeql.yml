@@ -1,4 +1,4 @@
-name: CodeQL
+name: Code Quality
 
 on:
   push:
@@ -8,27 +8,21 @@ on:
 
 jobs:
   analyze:
-    name: Analyze (Dart)
+    name: Flutter Analyze
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: github/codeql-action/init@v3
-        with:
-          languages: dart
-          queries: security-extended
 
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-      - uses: github/codeql-action/analyze@v3
-        with:
-          category: /language:dart
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Audit dependencies
+        run: dart pub audit
