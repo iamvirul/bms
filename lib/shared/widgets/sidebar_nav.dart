@@ -1,5 +1,6 @@
 import 'package:bms/core/router/app_router.dart';
 import 'package:bms/data/models/user_model.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bms/features/auth/domain/auth_state.dart';
 import 'package:bms/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -119,10 +120,11 @@ class _Header extends StatelessWidget {
   const _Header({required this.collapsed});
   final bool collapsed;
 
-  static const _logo = BoxDecoration(
-    color: _kSidebarAccent,
-    borderRadius: BorderRadius.all(Radius.circular(8)),
-  );
+  static Widget get _logoMark => SvgPicture.asset(
+        'assets/images/bms_logo.svg',
+        width: 32,
+        height: 32,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -132,20 +134,10 @@ class _Header extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.fromLTRB(narrow ? 0 : 20, 16, narrow ? 0 : 20, 14),
           child: narrow
-              ? Center(
-                  child: Container(
-                    width: 32, height: 32,
-                    decoration: _logo,
-                    child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
-                  ),
-                )
+              ? Center(child: _logoMark)
               : Row(
                   children: [
-                    Container(
-                      width: 32, height: 32,
-                      decoration: _logo,
-                      child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
-                    ),
+                    _logoMark,
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
