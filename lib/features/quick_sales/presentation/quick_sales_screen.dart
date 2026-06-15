@@ -21,13 +21,6 @@ class QuickSalesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quick Sales'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'New Quick Sale',
-            onPressed: () => _showSaleSheet(context),
-          ),
-        ],
       ),
       body: Column(
         children: [
