@@ -50,9 +50,9 @@ class DashboardScreen extends ConsumerWidget {
               // ── KPI Grid ────────────────────────────────────────────────
               GridView.extent(
                 maxCrossAxisExtent: 300,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 3,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
