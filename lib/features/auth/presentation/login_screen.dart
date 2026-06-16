@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -66,49 +67,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           Center(
                             child: Column(
                               children: [
-                                Container(
-                                  width: 64,
-                                  height: 64,
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        AppColors.primary,
-                                        AppColors.primaryDark,
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primary.withValues(alpha: 0.35),
-                                        blurRadius: 16,
-                                        offset: const Offset(0, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'BMS',
-                                      style: TextStyle(
-                                        fontFamily: 'Inter',
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 18,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
+                                SvgPicture.asset(
+                                  'assets/images/bms_logo.svg',
+                                  height: 72,
                                 ),
                                 const SizedBox(height: 16),
-                                Text(
-                                  'BMS',
-                                  style: AppTextStyles.titleLarge.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
                                 Text(
                                   'Business Management System',
                                   style: AppTextStyles.bodySmall.copyWith(
