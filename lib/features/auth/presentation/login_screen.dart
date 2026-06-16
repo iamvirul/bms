@@ -137,7 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Text(
-              '© 2026 BMS. All rights reserved.',
+              '© ${DateTime.now().year} BMS. All rights reserved.',
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textDisabled,
                 fontSize: 11,
