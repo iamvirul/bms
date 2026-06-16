@@ -690,41 +690,64 @@ class _SummaryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.6,
-      children: items.map((item) {
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(item.icon, color: item.color, size: 16),
-                    const SizedBox(width: 4),
-                    Text(item.label,
-                        style: AppTextStyles.bodySmall),
-                  ],
-                ),
-                const Spacer(),
-                Text(
-                  item.value,
-                  style: AppTextStyles.titleMedium
-                      .copyWith(color: item.color),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+    // Build rows of 2 cards — content-driven height, no aspect ratio distortion
+    final rows = <Widget>[];
+    for (int i = 0; i < items.length; i += 2) {
+      rows.add(Row(
+        children: [
+          Expanded(child: _SummaryCard(item: items[i])),
+          const SizedBox(width: 12),
+          if (i + 1 < items.length)
+            Expanded(child: _SummaryCard(item: items[i + 1]))
+          else
+            const Expanded(child: SizedBox()),
+        ],
+      ));
+      if (i + 2 < items.length) rows.add(const SizedBox(height: 12));
+    }
+    return Column(children: rows);
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  const _SummaryCard({required this.item});
+  final ({String label, String value, Color color, IconData icon}) item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: item.color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(item.icon, color: item.color, size: 18),
             ),
-          ),
-        );
-      }).toList(),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.label, style: AppTextStyles.bodySmall),
+                  const SizedBox(height: 2),
+                  Text(
+                    item.value,
+                    style: AppTextStyles.titleMedium.copyWith(color: item.color),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
