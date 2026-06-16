@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300">
+  <!-- Background -->
+  <rect width="1200" height="300" fill="#0D1117"/>
+
+  <!-- Subtle grid texture -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1565C0" stroke-width="0.3" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="300" fill="url(#grid)"/>
+
+  <!-- Left accent bar -->
+  <rect x="0" y="0" width="5" height="300" fill="#1565C0"/>
+
+  <!-- Glow behind logo -->
+  <circle cx="130" cy="150" r="70" fill="#1565C0" opacity="0.08"/>
+
+  <!-- BMS Logo mark (scaled up, centered at 130,150) -->
+  <g transform="translate(80, 100)">
+    <rect width="100" height="100" rx="22" fill="#1565C0"/>
+    <rect x="18" y="18" width="27" height="20" rx="4" fill="white" opacity="1.00"/>
+    <rect x="55" y="18" width="27" height="20" rx="4" fill="white" opacity="0.42"/>
+    <rect x="18" y="46" width="27" height="20" rx="4" fill="white" opacity="0.68"/>
+    <rect x="55" y="46" width="27" height="20" rx="4" fill="white" opacity="1.00"/>
+    <rect x="18" y="74" width="64" height="8"  rx="3" fill="white" opacity="0.28"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="210" y="138" font-family="'SF Pro Display', 'Segoe UI', system-ui, sans-serif" font-size="56" font-weight="700" letter-spacing="-1" fill="white">getbms</text>
+
+  <!-- Tagline -->
+  <text x="212" y="172" font-family="'SF Pro Text', 'Segoe UI', system-ui, sans-serif" font-size="18" font-weight="400" fill="#8B949E" letter-spacing="0.3">Open source business management for everyone</text>
+
+  <!-- Divider -->
+  <line x1="210" y1="192" x2="700" y2="192" stroke="#21262D" stroke-width="1"/>
+
+  <!-- Pills -->
+  <!-- Flutter -->
+  <rect x="212" y="208" width="80" height="26" rx="13" fill="#1565C0" opacity="0.18"/>
+  <text x="252" y="225" font-family="system-ui, sans-serif" font-size="12" font-weight="500" fill="#5B9BD5" text-anchor="middle">Flutter</text>
+
+  <!-- Local-first -->
+  <rect x="303" y="208" width="96" height="26" rx="13" fill="#1565C0" opacity="0.18"/>
+  <text x="351" y="225" font-family="system-ui, sans-serif" font-size="12" font-weight="500" fill="#5B9BD5" text-anchor="middle">Local-first</text>
+
+  <!-- Open Source -->
+  <rect x="410" y="208" width="102" height="26" rx="13" fill="#238636" opacity="0.18"/>
+  <text x="461" y="225" font-family="system-ui, sans-serif" font-size="12" font-weight="500" fill="#3FB950" text-anchor="middle">Open Source</text>
+
+  <!-- Apache 2.0 -->
+  <rect x="523" y="208" width="96" height="26" rx="13" fill="#21262D"/>
+  <text x="571" y="225" font-family="system-ui, sans-serif" font-size="12" font-weight="500" fill="#8B949E" text-anchor="middle">Apache 2.0</text>
+
+  <!-- Right side decorative element -->
+  <g opacity="0.06">
+    <rect x="950" y="60" width="180" height="60" rx="8" fill="white"/>
+    <rect x="950" y="132" width="180" height="60" rx="8" fill="white"/>
+    <rect x="950" y="204" width="180" height="36" rx="8" fill="white"/>
+    <rect x="1142" y="60" width="30" height="60" rx="8" fill="white"/>
+    <rect x="1142" y="132" width="30" height="60" rx="8" fill="white"/>
+  </g>
+</svg>

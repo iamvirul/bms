@@ -41,4 +41,32 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixi
 
   Future<void> recordPayment(SupplierPaymentsCompanion entry) =>
       into(supplierPayments).insert(entry);
+
+  Future<List<Purchase>> getAllPurchases() =>
+      (select(purchases)..orderBy([(p) => OrderingTerm.desc(p.createdAt)])).get();
+
+  Future<List<Purchase>> getPurchasesBySupplier(String supplierId) =>
+      (select(purchases)
+            ..where((p) => p.supplierId.equals(supplierId))
+            ..orderBy([(p) => OrderingTerm.desc(p.createdAt)]))
+          .get();
+
+  Future<List<PurchaseItem>> getItemsForPurchase(String purchaseId) =>
+      (select(purchaseItems)..where((i) => i.purchaseId.equals(purchaseId))).get();
+
+  Future<String> nextGrnNumber() async {
+    return transaction(() async {
+      final maxExpr = purchases.grnNumber.max();
+      final row = await (selectOnly(purchases)..addColumns([maxExpr])).getSingle();
+      final maxGrn = row.read(maxExpr);
+
+      int maxNumber = 0;
+      if (maxGrn != null) {
+        final match = RegExp(r'GRN-(\d+)').firstMatch(maxGrn);
+        if (match != null) maxNumber = int.tryParse(match.group(1)!) ?? 0;
+      }
+
+      return 'GRN-${(maxNumber + 1).toString().padLeft(5, '0')}';
+    });
+  }
 }

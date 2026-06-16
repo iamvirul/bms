@@ -1,5 +1,6 @@
 import 'package:bms/core/router/app_router.dart';
 import 'package:bms/data/models/user_model.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bms/features/auth/domain/auth_state.dart';
 import 'package:bms/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -30,19 +31,33 @@ class SidebarNav extends ConsumerWidget {
   final bool collapsed;
   final VoidCallback onToggle;
 
-  static const List<_NavItemData> _navItems = [
-    _NavItemData(label: 'Dashboard', icon: Icons.grid_view_rounded, route: AppRoutes.dashboard),
-    _NavItemData(label: 'POS / Sales', icon: Icons.point_of_sale_rounded, route: AppRoutes.pos),
-    _NavItemData(label: 'Invoices', icon: Icons.receipt_long_rounded, route: AppRoutes.invoices, minRole: _Role.admin),
-    _NavItemData(label: 'Inventory', icon: Icons.inventory_2_rounded, route: AppRoutes.inventory),
-    _NavItemData(label: 'Customers', icon: Icons.people_rounded, route: AppRoutes.customers),
-    _NavItemData(label: 'Debtors', icon: Icons.account_balance_wallet_outlined, route: AppRoutes.debtors, minRole: _Role.admin),
-    _NavItemData(label: 'Suppliers', icon: Icons.local_shipping_rounded, route: AppRoutes.suppliers, minRole: _Role.admin),
-    _NavItemData(label: 'Cheques', icon: Icons.account_balance_rounded, route: AppRoutes.cheques, minRole: _Role.admin),
-    _NavItemData(label: 'Petty Cash', icon: Icons.account_balance_wallet_rounded, route: AppRoutes.pettyCash, minRole: _Role.admin),
-    _NavItemData(label: 'Reports', icon: Icons.bar_chart_rounded, route: AppRoutes.reports, minRole: _Role.admin),
-    _NavItemData(label: 'Users', icon: Icons.manage_accounts_rounded, route: AppRoutes.users, minRole: _Role.developer),
-    _NavItemData(label: 'Settings', icon: Icons.settings_rounded, route: AppRoutes.settings, minRole: _Role.admin),
+  static const List<_NavSection> _sections = [
+    _NavSection(label: 'Main', items: [
+      _NavItemData(label: 'Dashboard', icon: Icons.grid_view_rounded, route: AppRoutes.dashboard),
+    ]),
+    _NavSection(label: 'Sales', items: [
+      _NavItemData(label: 'POS / Sales', icon: Icons.point_of_sale_rounded, route: AppRoutes.pos),
+      _NavItemData(label: 'Quick Sales', icon: Icons.flash_on_rounded, route: AppRoutes.quickSales, minRole: _Role.admin),
+      _NavItemData(label: 'Invoices', icon: Icons.receipt_long_rounded, route: AppRoutes.invoices, minRole: _Role.admin),
+    ]),
+    _NavSection(label: 'Stock', items: [
+      _NavItemData(label: 'Inventory', icon: Icons.inventory_2_rounded, route: AppRoutes.inventory),
+      _NavItemData(label: 'GRN', icon: Icons.move_to_inbox_rounded, route: AppRoutes.grn, minRole: _Role.admin),
+    ]),
+    _NavSection(label: 'Contacts', items: [
+      _NavItemData(label: 'Customers', icon: Icons.people_rounded, route: AppRoutes.customers),
+      _NavItemData(label: 'Debtors', icon: Icons.account_balance_wallet_outlined, route: AppRoutes.debtors, minRole: _Role.admin),
+      _NavItemData(label: 'Suppliers', icon: Icons.local_shipping_rounded, route: AppRoutes.suppliers, minRole: _Role.admin),
+    ]),
+    _NavSection(label: 'Finance', items: [
+      _NavItemData(label: 'Cheques', icon: Icons.account_balance_rounded, route: AppRoutes.cheques, minRole: _Role.admin),
+      _NavItemData(label: 'Petty Cash', icon: Icons.account_balance_wallet_rounded, route: AppRoutes.pettyCash, minRole: _Role.admin),
+    ]),
+    _NavSection(label: 'Admin', items: [
+      _NavItemData(label: 'Reports', icon: Icons.bar_chart_rounded, route: AppRoutes.reports, minRole: _Role.admin),
+      _NavItemData(label: 'Users', icon: Icons.manage_accounts_rounded, route: AppRoutes.users, minRole: _Role.developer),
+      _NavItemData(label: 'Settings', icon: Icons.settings_rounded, route: AppRoutes.settings, minRole: _Role.admin),
+    ]),
   ];
 
   @override
@@ -64,15 +79,30 @@ class SidebarNav extends ConsumerWidget {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                children: _navItems
-                    .where((item) => item.isVisibleFor(role))
-                    .map((item) => _NavTile(
-                          item: item,
-                          isActive: currentLocation.startsWith(item.route),
-                          collapsed: collapsed,
-                          onTap: () => context.go(item.route),
-                        ))
-                    .toList(),
+                children: [
+                  for (final section in _sections) ...[
+                    // Only show section if at least one item is visible
+                    if (section.items.any((i) => i.isVisibleFor(role))) ...[
+                      if (!collapsed)
+                        _SectionLabel(label: section.label)
+                      else
+                        const SizedBox(height: 4),
+                      for (final item in section.items)
+                        if (item.isVisibleFor(role))
+                          _NavTile(
+                            item: item,
+                            isActive: currentLocation.startsWith(item.route),
+                            collapsed: collapsed,
+                            onTap: () => context.go(item.route),
+                          ),
+                      if (collapsed)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          child: Divider(color: Color(0xFF1F2937), height: 1),
+                        ),
+                    ],
+                  ],
+                ],
               ),
             ),
             const Divider(color: _kSidebarDivider, height: 1),
@@ -85,61 +115,55 @@ class SidebarNav extends ConsumerWidget {
   }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
   const _Header({required this.collapsed});
   final bool collapsed;
 
+  static Widget get _logoMark => SvgPicture.asset(
+        'assets/images/bms_logo.svg',
+        width: 32,
+        height: 32,
+      );
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(collapsed ? 0 : 20, 16, collapsed ? 0 : 20, 14),
-      child: collapsed
-          ? Center(
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: _kSidebarAccent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
-              ),
-            )
-          : Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: _kSidebarAccent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 18),
-                ),
-                const SizedBox(width: 10),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 120;
+        return Padding(
+          padding: EdgeInsets.fromLTRB(narrow ? 0 : 20, 16, narrow ? 0 : 20, 14),
+          child: narrow
+              ? Center(child: _logoMark)
+              : Row(
                   children: [
-                    Text('BMS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
-                        )),
-                    Text('Business Manager',
-                        style: TextStyle(color: _kSidebarText, fontSize: 11)),
+                    _logoMark,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text('BMS',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                              )),
+                          Text('Business Manager',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: _kSidebarText, fontSize: 11)),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ],
-            ),
+        );
+      },
     );
   }
 }
 
-// ── Nav tile ──────────────────────────────────────────────────────────────────
 
 class _NavTile extends StatefulWidget {
   const _NavTile({
@@ -185,18 +209,22 @@ class _NavTileState extends State<_NavTile> {
                   ? const Border(left: BorderSide(color: _kSidebarAccent, width: 3))
                   : const Border(),
             ),
-            child: widget.collapsed
-                ? SizedBox(
-                    height: 40,
-                    child: Center(
-                      child: Icon(
-                        widget.item.icon,
-                        size: 18,
-                        color: active ? _kSidebarAccent : _kSidebarText,
+            child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final narrow = constraints.maxWidth < 120;
+                  if (narrow) {
+                    return SizedBox(
+                      height: 40,
+                      child: Center(
+                        child: Icon(
+                          widget.item.icon,
+                          size: 18,
+                          color: active ? _kSidebarAccent : _kSidebarText,
+                        ),
                       ),
-                    ),
-                  )
-                : Padding(
+                    );
+                  }
+                  return Padding(
                     padding: EdgeInsets.fromLTRB(active ? 13 : 16, 10, 12, 10),
                     child: Row(
                       children: [
@@ -204,17 +232,22 @@ class _NavTileState extends State<_NavTile> {
                             size: 18,
                             color: active ? _kSidebarAccent : _kSidebarText),
                         const SizedBox(width: 11),
-                        Text(
-                          widget.item.label,
-                          style: TextStyle(
-                            color: active ? _kSidebarActiveText : _kSidebarText,
-                            fontSize: 13.5,
-                            fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                        Expanded(
+                          child: Text(
+                            widget.item.label,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: active ? _kSidebarActiveText : _kSidebarText,
+                              fontSize: 13.5,
+                              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
+                  );
+                },
+              ),
           ),
         ),
       ),
@@ -232,7 +265,6 @@ class _NavTileState extends State<_NavTile> {
   }
 }
 
-// ── User footer ───────────────────────────────────────────────────────────────
 
 class _UserFooter extends StatelessWidget {
   const _UserFooter({required this.user, required this.ref, required this.collapsed});
@@ -253,50 +285,56 @@ class _UserFooter extends StatelessWidget {
       ),
     );
 
-    if (collapsed) {
-      return Tooltip(
-        message: '${user.name}  (${user.role})',
-        preferBelow: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Center(child: avatar),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          avatar,
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(user.name,
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w500),
-                    overflow: TextOverflow.ellipsis),
-                Text(user.role.toUpperCase(),
-                    style: const TextStyle(color: _kSidebarText, fontSize: 10.5)),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final narrow = constraints.maxWidth < 120;
+        if (narrow) {
+          return Tooltip(
+            message: '${user.name}  (${user.role})',
+            preferBelow: false,
+            child: InkWell(
+              onTap: () => ref.read(authStateProvider.notifier).logout(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Center(child: avatar),
+              ),
             ),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              avatar,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(user.name,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis),
+                    Text(user.role.toUpperCase(),
+                        style: const TextStyle(color: _kSidebarText, fontSize: 10.5)),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.logout_rounded, size: 16, color: _kSidebarText),
+                tooltip: 'Sign out',
+                onPressed: () => ref.read(authStateProvider.notifier).logout(),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, size: 16, color: _kSidebarText),
-            tooltip: 'Sign out',
-            onPressed: () => ref.read(authStateProvider.notifier).logout(),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-// ── Toggle button ─────────────────────────────────────────────────────────────
 
 class _ToggleButton extends StatelessWidget {
   const _ToggleButton({required this.collapsed, required this.onToggle});
@@ -321,7 +359,6 @@ class _ToggleButton extends StatelessWidget {
   }
 }
 
-// ── Data types ────────────────────────────────────────────────────────────────
 
 enum _Role { cashier, admin, developer }
 
@@ -330,6 +367,33 @@ _Role _parseRole(String r) => switch (r) {
       'admin' => _Role.admin,
       _ => _Role.cashier,
     };
+
+class _NavSection {
+  const _NavSection({required this.label, required this.items});
+  final String label;
+  final List<_NavItemData> items;
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Text(
+        label.toUpperCase(),
+        style: const TextStyle(
+          color: Color(0xFF4B5563),
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.0,
+        ),
+      ),
+    );
+  }
+}
 
 class _NavItemData {
   const _NavItemData({

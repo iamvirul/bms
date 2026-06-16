@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../data/database/app_database.dart';
-import '../../../data/database/daos/audit_log_dao.dart';
 import '../../../features/auth/domain/auth_state.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/settings_provider.dart';
@@ -110,7 +109,7 @@ class SettingsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('BMS — Business Manager', style: AppTextStyles.labelLarge),
+                Text('BMS - Business Manager', style: AppTextStyles.labelLarge),
                 const SizedBox(height: 4),
                 Text('Version 1.0.0', style: AppTextStyles.bodySmall),
                 const SizedBox(height: 4),
@@ -301,8 +300,7 @@ class _StoreInfoTileState extends ConsumerState<_StoreInfoTile> {
               labelText: 'Store Name',
               hintText: 'e.g. My Shop',
               prefixIcon: Icon(Icons.storefront_outlined),
-              isDense: true,
-            ),
+                          ),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -311,8 +309,7 @@ class _StoreInfoTileState extends ConsumerState<_StoreInfoTile> {
               labelText: 'Address',
               hintText: 'e.g. 123 Main St, Colombo',
               prefixIcon: Icon(Icons.location_on_outlined),
-              isDense: true,
-            ),
+                          ),
             maxLines: 2,
           ),
           const SizedBox(height: 12),
@@ -322,8 +319,7 @@ class _StoreInfoTileState extends ConsumerState<_StoreInfoTile> {
               labelText: 'Phone',
               hintText: 'e.g. 077 123 4567',
               prefixIcon: Icon(Icons.phone_outlined),
-              isDense: true,
-            ),
+                          ),
             keyboardType: TextInputType.phone,
           ),
           const SizedBox(height: 16),

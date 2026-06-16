@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 280">
+  <!-- background -->
+  <rect width="1200" height="280" fill="#0D1117"/>
+
+  <!-- left accent bar -->
+  <rect x="0" y="0" width="6" height="280" fill="#1565C0"/>
+
+  <!-- icon mark 120x120 centered vertically at x=60 -->
+  <rect x="60" y="80" width="120" height="120" rx="26" fill="#1565C0"/>
+  <!-- grid inner (84,104) 72x72: col w=30 gap=12, row h=22 gap=10 bar=8 -->
+  <!-- 30+12+30=72  22+10+22+10+8=72 -->
+  <rect x="84"  y="104" width="30" height="22" rx="5" fill="white" opacity="1.00"/>
+  <rect x="126" y="104" width="30" height="22" rx="5" fill="white" opacity="0.38"/>
+  <rect x="84"  y="136" width="30" height="22" rx="5" fill="white" opacity="0.65"/>
+  <rect x="126" y="136" width="30" height="22" rx="5" fill="white" opacity="1.00"/>
+  <rect x="84"  y="168" width="72" height="8"  rx="3" fill="white" opacity="0.25"/>
+
+  <!-- wordmark -->
+  <text x="220" y="155" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="700" fill="white" letter-spacing="-2">BMS</text>
+
+  <!-- divider -->
+  <line x1="396" y1="110" x2="396" y2="170" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+
+  <!-- tagline block -->
+  <text x="420" y="148" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="400" fill="rgba(255,255,255,0.70)">Business Management System</text>
+  <text x="421" y="178" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="400" fill="rgba(255,255,255,0.35)" letter-spacing="1">Local-first · Flutter · SQLite</text>
+
+  <!-- right badge -->
+  <rect x="1040" y="118" width="120" height="44" rx="8" fill="#1565C0" opacity="0.20"/>
+  <rect x="1040" y="118" width="120" height="44" rx="8" fill="none" stroke="#1565C0" stroke-width="1" opacity="0.50"/>
+  <text x="1100" y="145" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#42A5F5" text-anchor="middle">getbms</text>
+</svg>

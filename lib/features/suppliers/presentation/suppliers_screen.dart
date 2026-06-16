@@ -230,25 +230,25 @@ class _AddSupplierSheetState extends ConsumerState<_AddSupplierSheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Supplier Name *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Supplier Name *'),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _phone,
-              decoration: const InputDecoration(labelText: 'Phone', isDense: true),
+              decoration: const InputDecoration(labelText: 'Phone'),
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _address,
-              decoration: const InputDecoration(labelText: 'Address', isDense: true),
+              decoration: const InputDecoration(labelText: 'Address'),
               maxLines: 2,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _paymentTerms,
-              decoration: const InputDecoration(labelText: 'Payment Terms (e.g. Net 30)', isDense: true),
+              decoration: const InputDecoration(labelText: 'Payment Terms (e.g. Net 30)'),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -320,11 +320,11 @@ class _SupplierPaymentSheetState extends ConsumerState<_SupplierPaymentSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Record Payment — ${widget.supplierName}', style: AppTextStyles.titleLarge),
+            Text('Record Payment - ${widget.supplierName}', style: AppTextStyles.titleLarge),
             const SizedBox(height: 16),
             TextFormField(
               controller: _amount,
-              decoration: const InputDecoration(labelText: 'Amount *', prefixText: 'Rs. ', isDense: true),
+              decoration: const InputDecoration(labelText: 'Amount *', prefixText: 'Rs. '),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Required';
@@ -335,7 +335,7 @@ class _SupplierPaymentSheetState extends ConsumerState<_SupplierPaymentSheet> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               value: _method,
-              decoration: const InputDecoration(labelText: 'Payment Method', isDense: true),
+              decoration: const InputDecoration(labelText: 'Payment Method'),
               items: const [
                 DropdownMenuItem(value: 'cash', child: Text('Cash')),
                 DropdownMenuItem(value: 'bank', child: Text('Bank Transfer')),
@@ -346,7 +346,7 @@ class _SupplierPaymentSheetState extends ConsumerState<_SupplierPaymentSheet> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _notes,
-              decoration: const InputDecoration(labelText: 'Notes', isDense: true),
+              decoration: const InputDecoration(labelText: 'Notes'),
             ),
             const SizedBox(height: 24),
             ElevatedButton(

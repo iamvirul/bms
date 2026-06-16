@@ -18,7 +18,6 @@ const _storeNameKey = 'store_name';
 const _storeAddressKey = 'store_address';
 const _storePhoneKey = 'store_phone';
 
-// ── Store info ────────────────────────────────────────────────────────────────
 
 class StoreInfo {
   const StoreInfo({
@@ -328,7 +327,7 @@ class SettingsActions {
     }
   }
 
-  // File reading — on macOS/desktop file_picker populates path, not bytes.
+  // File reading - on macOS/desktop file_picker populates path, not bytes.
   // Always prefer bytes when available, fall back to reading from path.
   Future<Uint8List?> _readPickedFile(PlatformFile file) async {
     if (file.bytes != null) return file.bytes;

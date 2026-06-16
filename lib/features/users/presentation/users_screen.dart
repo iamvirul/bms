@@ -248,7 +248,7 @@ class _UserDetailSheet extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                'Developer seed account — cannot be deactivated or deleted.',
+                'Developer seed account - cannot be deactivated or deleted.',
                 style: AppTextStyles.bodySmall.copyWith(color: AppColors.warning),
               ),
             ),
@@ -258,7 +258,6 @@ class _UserDetailSheet extends ConsumerWidget {
   }
 }
 
-// ── Add User Sheet ───────────────────────────────────────────────────────────
 
 class _AddUserSheet extends ConsumerStatefulWidget {
   const _AddUserSheet({required this.isDeveloper});
@@ -323,13 +322,13 @@ class _AddUserSheetState extends ConsumerState<_AddUserSheet> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _name,
-                decoration: const InputDecoration(labelText: 'Full Name *', isDense: true),
+                decoration: const InputDecoration(labelText: 'Full Name *'),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _username,
-                decoration: const InputDecoration(labelText: 'Username *', isDense: true),
+                decoration: const InputDecoration(labelText: 'Username *'),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Required';
                   if (v.trim().length < 3) return 'Min 3 characters';
@@ -342,8 +341,7 @@ class _AddUserSheetState extends ConsumerState<_AddUserSheet> {
                 obscureText: _obscure,
                 decoration: InputDecoration(
                   labelText: 'Password *',
-                  isDense: true,
-                  suffixIcon: IconButton(
+                                    suffixIcon: IconButton(
                     icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
@@ -357,7 +355,7 @@ class _AddUserSheetState extends ConsumerState<_AddUserSheet> {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: _role,
-                decoration: const InputDecoration(labelText: 'Role *', isDense: true),
+                decoration: const InputDecoration(labelText: 'Role *'),
                 items: [
                   const DropdownMenuItem(value: 'cashier', child: Text('Cashier')),
                   const DropdownMenuItem(value: 'admin', child: Text('Admin')),
@@ -381,7 +379,6 @@ class _AddUserSheetState extends ConsumerState<_AddUserSheet> {
   }
 }
 
-// ── Edit User Sheet ──────────────────────────────────────────────────────────
 
 class _EditUserSheet extends ConsumerStatefulWidget {
   const _EditUserSheet({required this.user});
@@ -453,19 +450,19 @@ class _EditUserSheetState extends ConsumerState<_EditUserSheet> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Full Name *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Full Name *'),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _username,
-              decoration: const InputDecoration(labelText: 'Username *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Username *'),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               value: _role,
-              decoration: const InputDecoration(labelText: 'Role *', isDense: true),
+              decoration: const InputDecoration(labelText: 'Role *'),
               items: [
                 const DropdownMenuItem(value: 'cashier', child: Text('Cashier')),
                 const DropdownMenuItem(value: 'admin', child: Text('Admin')),
@@ -488,7 +485,6 @@ class _EditUserSheetState extends ConsumerState<_EditUserSheet> {
   }
 }
 
-// ── Reset Password Sheet ─────────────────────────────────────────────────────
 
 class _ResetPasswordSheet extends ConsumerStatefulWidget {
   const _ResetPasswordSheet({required this.userId, required this.userName});
@@ -542,15 +538,14 @@ class _ResetPasswordSheetState extends ConsumerState<_ResetPasswordSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Reset Password — ${widget.userName}', style: AppTextStyles.titleLarge),
+            Text('Reset Password - ${widget.userName}', style: AppTextStyles.titleLarge),
             const SizedBox(height: 16),
             TextFormField(
               controller: _password,
               obscureText: _obscure,
               decoration: InputDecoration(
                 labelText: 'New Password *',
-                isDense: true,
-                suffixIcon: IconButton(
+                                suffixIcon: IconButton(
                   icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility),
                   onPressed: () => setState(() => _obscure = !_obscure),
                 ),

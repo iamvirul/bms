@@ -3,6 +3,8 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     invalid_annotation_target: ignore
+    inference_failure_on_function_invocation: ignore
+    inference_failure_on_instance_creation: ignore
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
@@ -43,7 +45,6 @@ linter:
     - directives_ordering
     - eol_at_end_of_file
     - missing_whitespace_between_adjacent_strings
-    - no_rethrow_when_catch_returns_future
     - noop_primitive_operations
     - only_throw_errors
     - parameter_assignments

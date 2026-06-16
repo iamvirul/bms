@@ -19,7 +19,7 @@ abstract final class InvoicePdf {
   static const _border = PdfColor.fromInt(0xFFE2E8F0);
   static const _errorRed = PdfColor.fromInt(0xFFC62828);
 
-  // PdfColors doesn't support alpha shades directly — define them manually.
+  // PdfColors doesn't support alpha shades directly - define them manually.
   static const _white70 = PdfColor(1, 1, 1, 0.7);
   static const _white60 = PdfColor(1, 1, 1, 0.6);
 
@@ -89,7 +89,6 @@ abstract final class InvoicePdf {
     return doc;
   }
 
-  // ─── Header ───────────────────────────────────────────────────────────────
 
   static pw.Widget _buildHeader(
     pw.Font font,
@@ -171,7 +170,6 @@ abstract final class InvoicePdf {
         ],
       );
 
-  // ─── Bill To ──────────────────────────────────────────────────────────────
 
   static pw.Widget _buildBillTo(
     pw.Font font,
@@ -222,7 +220,6 @@ abstract final class InvoicePdf {
     );
   }
 
-  // ─── Items Table ──────────────────────────────────────────────────────────
 
   static pw.Widget _buildItemsTable(
     pw.Font font,
@@ -230,8 +227,6 @@ abstract final class InvoicePdf {
     pw.Font fontSemiBold,
     List<InvoiceItem> items,
   ) {
-    const colWidths = [30.0, null, 40.0, 60.0, 50.0, 65.0];
-
     pw.Widget cell(
       String text, {
       pw.Font? f,
@@ -308,7 +303,6 @@ abstract final class InvoicePdf {
     );
   }
 
-  // ─── Totals ───────────────────────────────────────────────────────────────
 
   static pw.Widget _buildTotals(
     pw.Font font,
@@ -368,7 +362,6 @@ abstract final class InvoicePdf {
     );
   }
 
-  // ─── Payment Info ─────────────────────────────────────────────────────────
 
   static pw.Widget _buildPaymentInfo(
     pw.Font font,
@@ -413,7 +406,6 @@ abstract final class InvoicePdf {
     );
   }
 
-  // ─── Void Info ────────────────────────────────────────────────────────────
 
   static pw.Widget _buildVoidInfo(pw.Font font, pw.Font fontBold, Invoice invoice) =>
       pw.Container(
@@ -441,7 +433,6 @@ abstract final class InvoicePdf {
         ),
       );
 
-  // ─── Void Watermark ───────────────────────────────────────────────────────
 
   static pw.Widget _buildVoidWatermark(pw.Font fontBold) => pw.Center(
         child: pw.Transform.rotate(
@@ -461,7 +452,6 @@ abstract final class InvoicePdf {
         ),
       );
 
-  // ─── Footer ───────────────────────────────────────────────────────────────
 
   static pw.Widget _buildFooter(pw.Font font, pw.Font fontSemiBold, Invoice invoice) =>
       pw.Container(
@@ -482,7 +472,6 @@ abstract final class InvoicePdf {
         ),
       );
 
-  // ─── Helpers ──────────────────────────────────────────────────────────────
 
   static String _paymentLabel(String type) => switch (type) {
         'cash' => 'Cash',

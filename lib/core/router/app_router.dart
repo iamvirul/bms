@@ -7,11 +7,13 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/cheques/presentation/cheque_screen.dart';
 import '../../features/customers/presentation/customers_screen.dart';
 import '../../features/debtors/presentation/debtors_screen.dart';
+import '../../features/grn/presentation/grn_screen.dart';
 import '../../features/invoices/presentation/invoices_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/inventory/presentation/inventory_screen.dart';
 import '../../features/petty_cash/presentation/petty_cash_screen.dart';
 import '../../features/pos/presentation/pos_screen.dart';
+import '../../features/quick_sales/presentation/quick_sales_screen.dart';
 import '../../features/reports/presentation/reports_screen.dart';
 import '../../features/suppliers/presentation/suppliers_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
@@ -88,6 +90,16 @@ GoRouter appRouter(Ref ref) {
             pageBuilder: (context, state) => _fadePage(state, const PettyCashScreen()),
           ),
           GoRoute(
+            path: AppRoutes.quickSales,
+            name: 'quickSales',
+            pageBuilder: (context, state) => _fadePage(state, const QuickSalesScreen()),
+          ),
+          GoRoute(
+            path: AppRoutes.grn,
+            name: 'grn',
+            pageBuilder: (context, state) => _fadePage(state, const GrnScreen()),
+          ),
+          GoRoute(
             path: AppRoutes.reports,
             name: 'reports',
             pageBuilder: (context, state) => _fadePage(state, const ReportsScreen()),
@@ -140,6 +152,8 @@ abstract final class AppRoutes {
   static const String suppliers = '/suppliers';
   static const String cheques = '/cheques';
   static const String pettyCash = '/petty-cash';
+  static const String quickSales = '/quick-sales';
+  static const String grn = '/grn';
   static const String reports = '/reports';
   static const String users = '/users';
   static const String settings = '/settings';

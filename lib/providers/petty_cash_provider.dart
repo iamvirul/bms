@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -8,7 +9,7 @@ import 'database_provider.dart';
 
 typedef _DateRange = ({DateTime from, DateTime to});
 
-// Manual NotifierProvider for date range — no codegen needed.
+// Manual NotifierProvider for date range - no codegen needed.
 // Screens: ref.read(pettyCashDateRangeProvider.notifier).set(from, to)
 final pettyCashDateRangeProvider =
     NotifierProvider<_PettyCashDateRangeNotifier, _DateRange>(
@@ -25,7 +26,7 @@ class _PettyCashDateRangeNotifier extends Notifier<_DateRange> {
   void set(DateTime from, DateTime to) => state = (from: from, to: to);
 }
 
-// Manual FutureProvider — avoids riverpod_generator's Drift type issue.
+// Manual FutureProvider - avoids riverpod_generator's Drift type issue.
 final pettyCashEntriesProvider = FutureProvider.autoDispose<List<PettyCashEntry>>(
   (ref) {
     final range = ref.watch(pettyCashDateRangeProvider);
@@ -53,6 +54,7 @@ class PettyCashActions {
     required double amount,
     required String type,
     required String category,
+    String? receiptPhotoPath,
   }) async {
     final id = _uuid.v7();
     await _ref.read(pettyCashDaoProvider).insert(PettyCashCompanion.insert(
@@ -62,6 +64,7 @@ class PettyCashActions {
           type: type,
           category: category,
           userId: _userId,
+          receiptPhotoPath: Value(receiptPhotoPath),
         ));
     await _ref.read(auditLogDaoProvider).log(
           id: _uuid.v7(),
