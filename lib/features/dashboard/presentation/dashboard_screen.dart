@@ -411,24 +411,36 @@ class _RevenueTrendChart extends StatelessWidget {
                   touchTooltipData: LineTouchTooltipData(
                     fitInsideHorizontally: true,
                     fitInsideVertically: true,
+                    tooltipRoundedRadius: 8,
+                    tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     getTooltipItems: (spots) => spots.map((spot) {
                       final day = trend[spot.x.toInt()];
                       final isRevenue = spot.barIndex == 0;
                       return LineTooltipItem(
-                        '${isRevenue ? "Revenue" : "GP"}\n${CurrencyUtils.format(spot.y)}',
+                        isRevenue ? dateFmt.format(day.date) : '',
                         AppTextStyles.bodySmall.copyWith(
-                          color: isRevenue ? AppColors.primary : AppColors.success,
-                          fontWeight: FontWeight.w600,
+                          color: Colors.white54,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11,
                         ),
-                        children: isRevenue
-                            ? [
-                                TextSpan(
-                                  text: '\n${dateFmt.format(day.date)}',
-                                  style: AppTextStyles.bodySmall
-                                      .copyWith(color: Colors.white70),
-                                ),
-                              ]
-                            : null,
+                        children: [
+                          TextSpan(
+                            text: '\n${isRevenue ? "Revenue" : "GP"}  ',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white60,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 11,
+                            ),
+                          ),
+                          TextSpan(
+                            text: CurrencyUtils.format(spot.y),
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       );
                     }).toList(),
                   ),
