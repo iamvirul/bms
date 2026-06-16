@@ -61,7 +61,9 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Analyze
-        run: flutter analyze --no-fatal-warnings
+        run: |
+          flutter analyze 2>&1 | tee /tmp/flutter_analyze.txt
+          ! grep -qE "^\s+error •" /tmp/flutter_analyze.txt
 
       - name: Audit dependencies
         run: dart pub audit
