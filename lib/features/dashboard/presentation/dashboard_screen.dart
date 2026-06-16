@@ -275,7 +275,7 @@ class _MtdPerformanceCard extends StatelessWidget {
               _MtdMetric(
                 label: 'Gross Profit',
                 value: CurrencyUtils.format(s.mtdGrossProfit),
-                color: AppColors.success,
+                color: const Color(0xFF69F0AE),
               ),
               const SizedBox(width: 24),
               _MtdMetric(
