@@ -86,6 +86,7 @@ class PosNotifier extends _$PosNotifier {
   PosState build() => const PosState();
 
   void addItem(Product product, {double qty = 1}) {
+    if (qty <= 0) return;
     final items = List<CartItem>.from(state.items);
     final idx = items.indexWhere((i) => i.product.id == product.id);
     if (idx >= 0) {

@@ -9,7 +9,9 @@ part 'returns_dao.g.dart';
 class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
   ReturnsDao(super.db);
 
-  Future<String> nextReturnNumber() async {
+  // Generates the next return number atomically. Must be called inside a
+  // transaction to prevent duplicates under concurrent access.
+  Future<String> _nextReturnNumber() async {
     final maxExpr = salesReturns.returnNo.max();
     final row =
         await (selectOnly(salesReturns)..addColumns([maxExpr])).getSingle();
@@ -22,12 +24,17 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
     return 'RET-${(maxNumber + 1).toString().padLeft(5, '0')}';
   }
 
+  // Inserts a return and its line items atomically, generating the return
+  // number inside the transaction to prevent duplicates.
   Future<SalesReturn> insertReturnWithItems(
     SalesReturnsCompanion entry,
     List<ReturnItemsCompanion> items,
   ) =>
       transaction(() async {
-        final salesReturn = await into(salesReturns).insertReturning(entry);
+        final returnNo = await _nextReturnNumber();
+        final salesReturn = await into(salesReturns).insertReturning(
+          entry.copyWith(returnNo: Value(returnNo)),
+        );
         await batch((b) => b.insertAll(returnItems, items));
         return salesReturn;
       });

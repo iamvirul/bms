@@ -45,8 +45,12 @@ class DashboardStats {
     return salesTrend.sublist(salesTrend.length - 7);
   }
 
-  double get mtdGrossProfit =>
-      salesTrend.fold(0.0, (s, d) => s + d.grossProfit);
+  double get mtdGrossProfit {
+    final now = DateTime.now();
+    return salesTrend
+        .where((d) => d.date.year == now.year && d.date.month == now.month)
+        .fold(0.0, (s, d) => s + d.grossProfit);
+  }
 
   double get mtdGrossMarginPct {
     if (mtdSales == 0) return 0;

@@ -6,12 +6,12 @@ part 'reports_provider.g.dart';
 
 @riverpod
 Future<List<DailySales>> dailySales(Ref ref, DateTime from, DateTime to) =>
-    ref.read(reportsDaoProvider).getDailySales(from, to);
+    ref.watch(reportsDaoProvider).getDailySales(from, to);
 
 @riverpod
 Future<List<StockValuationRow>> stockValuation(Ref ref) =>
-    ref.read(reportsDaoProvider).getStockValuation();
+    ref.watch(reportsDaoProvider).getStockValuation();
 
 @riverpod
 Future<List<DebtorAgingRow>> debtorAging(Ref ref) =>
-    ref.read(reportsDaoProvider).getDebtorAging();
+    ref.watch(reportsDaoProvider).getDebtorAging();

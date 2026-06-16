@@ -120,10 +120,7 @@ class DashboardScreen extends ConsumerWidget {
                   subtitle: 'Current month by method',
                 ),
                 const SizedBox(height: 12),
-                _PaymentMixCard(
-                  mix: s.paymentMix,
-                  totalSales: s.mtdSales,
-                ),
+                _PaymentMixCard(mix: s.paymentMix),
               ],
 
               // ── Recent Invoices ──────────────────────────────────────────
@@ -696,9 +693,8 @@ class _WeeklyGroupedChart extends StatelessWidget {
 // ── Payment Mix Card ─────────────────────────────────────────────────────────
 
 class _PaymentMixCard extends StatelessWidget {
-  const _PaymentMixCard({required this.mix, required this.totalSales});
+  const _PaymentMixCard({required this.mix});
   final Map<String, double> mix;
-  final double totalSales;
 
   static const _colorMap = {
     'cash': AppColors.success,

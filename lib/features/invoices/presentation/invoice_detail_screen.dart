@@ -544,8 +544,11 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
   double get _totalReturnAmount {
     double total = 0;
     for (int i = 0; i < widget.detail.items.length; i++) {
+      final item = widget.detail.items[i];
       final qty = double.tryParse(_qtyControllers[i].text.trim()) ?? 0;
-      if (qty > 0) total += widget.detail.items[i].unitPrice * qty;
+      if (qty > 0 && item.qty > 0) {
+        total += (item.subtotal / item.qty) * qty;
+      }
     }
     return total;
   }
@@ -580,14 +583,16 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
       const uuid = Uuid();
 
       final returnId = uuid.v7();
-      final returnNo = await returnsDao.nextReturnNumber();
-      final totalAmount = returnItems.fold(
-          0.0, (s, e) => s + e.item.unitPrice * e.qty);
+      // Use discounted unit price (subtotal / qty) so partial returns respect
+      // any line-item discount the customer originally received.
+      final totalAmount = returnItems.fold(0.0, (s, e) {
+        if (e.item.qty <= 0) return s;
+        return s + (e.item.subtotal / e.item.qty) * e.qty;
+      });
 
       final entry = SalesReturnsCompanion(
         id: Value(returnId),
         invoiceId: Value(widget.detail.invoice.id),
-        returnNo: Value(returnNo),
         type: Value(_type),
         totalAmount: Value(totalAmount),
         reason: Value(
@@ -596,31 +601,39 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
       );
 
       final items = returnItems
-          .map((e) => ReturnItemsCompanion(
-                id: Value(uuid.v7()),
-                returnId: Value(returnId),
-                productId: Value(e.item.productId),
-                productName: Value(e.item.productName),
-                qty: Value(e.qty),
-                unitPrice: Value(e.item.unitPrice),
-                subtotal: Value(e.item.unitPrice * e.qty),
-              ))
+          .map((e) {
+            final effectiveUnitPrice =
+                e.item.qty > 0 ? e.item.subtotal / e.item.qty : e.item.unitPrice;
+            return ReturnItemsCompanion(
+              id: Value(uuid.v7()),
+              returnId: Value(returnId),
+              productId: Value(e.item.productId),
+              productName: Value(e.item.productName),
+              qty: Value(e.qty),
+              unitPrice: Value(effectiveUnitPrice),
+              subtotal: Value(effectiveUnitPrice * e.qty),
+            );
+          })
           .toList();
 
-      await returnsDao.insertReturnWithItems(entry, items);
-
-      for (final e in returnItems) {
-        await inventoryRepo.adjustStock(
-          productId: e.item.productId,
-          delta: e.qty,
-          reason: 'Sales return $returnNo',
-          userId: userId,
-          userName: userName,
-          refId: returnId,
-          refType: 'sales_return',
-          movementType: 'return_in',
-        );
-      }
+      // Wrap insert + all stock adjustments in a single transaction so that
+      // a failed stock write rolls back the return record too.
+      late SalesReturn inserted;
+      await returnsDao.transaction(() async {
+        inserted = await returnsDao.insertReturnWithItems(entry, items);
+        for (final e in returnItems) {
+          await inventoryRepo.adjustStock(
+            productId: e.item.productId,
+            delta: e.qty,
+            reason: 'Sales return ${inserted.returnNo}',
+            userId: userId,
+            userName: userName,
+            refId: returnId,
+            refType: 'sales_return',
+            movementType: 'return_in',
+          );
+        }
+      });
 
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
