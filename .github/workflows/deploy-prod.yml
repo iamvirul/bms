@@ -1,0 +1,55 @@
+name: Deploy to Production
+
+on:
+  # Auto-triggers only when staging completes successfully
+  workflow_run:
+    workflows: ["Deploy to Staging"]
+    types: [completed]
+    branches: [master]
+  # Keep manual trigger as fallback
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy production
+    runs-on: ubuntu-latest
+    # Skip if triggered by workflow_run and staging did not succeed
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: production
+      url: https://getbms.github.io/bms/
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # actions/checkout@v4.2.2
+        with:
+          # When triggered by workflow_run, deploy the exact commit staging used
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2  # subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: dart run build_runner build --delete-conflicting-outputs
+
+      - run: flutter build web --release --base-href /bms/
+
+      - uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453  # peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          keep_files: true
+          commit_message: 'deploy: production @ ${{ github.event.workflow_run.head_sha || github.sha }}'

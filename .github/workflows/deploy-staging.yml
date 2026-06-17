@@ -1,0 +1,58 @@
+name: Deploy to Staging
+
+on:
+  # Auto-triggers when a PR is merged to master
+  push:
+    branches: [master]
+  # Keep manual trigger as fallback for re-runs or hotfixes
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or tag to deploy (default: master)'
+        required: false
+        default: 'master'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy staging
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://getbms.github.io/bms/staging/
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+
+      - name: Capture deployed SHA
+        id: head
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2  # subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: dart run build_runner build --delete-conflicting-outputs
+
+      - run: flutter build web --release --base-href /bms/staging/
+
+      - uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453  # peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          destination_dir: staging
+          keep_files: true
+          commit_message: 'deploy: staging @ ${{ steps.head.outputs.sha }}'
