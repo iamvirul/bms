@@ -1,12 +1,11 @@
+import 'package:bms/core/theme/app_colors.dart';
+import 'package:bms/core/theme/app_text_styles.dart';
+import 'package:bms/core/utils/currency_utils.dart';
+import 'package:bms/data/database/app_database.dart';
+import 'package:bms/providers/customers_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/currency_utils.dart';
-import '../../../data/database/app_database.dart';
-import '../../../providers/customers_provider.dart';
 
 class DebtorsScreen extends ConsumerWidget {
   const DebtorsScreen({super.key});
@@ -75,7 +74,7 @@ class _SummaryBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Total Outstanding', style: AppTextStyles.bodySmall),
+                const Text('Total Outstanding', style: AppTextStyles.bodySmall),
                 Text(CurrencyUtils.format(total),
                     style: AppTextStyles.headlineMedium.copyWith(color: AppColors.error)),
                 Text('$count debtor${count == 1 ? '' : 's'}', style: AppTextStyles.bodySmall),
@@ -170,7 +169,7 @@ class _DebtorTile extends StatelessWidget {
             style: AppTextStyles.labelLarge.copyWith(color: color),
           ),
           const SizedBox(width: 4),
-          Icon(Icons.chevron_right, size: 16, color: AppColors.textDisabled),
+          const Icon(Icons.chevron_right, size: 16, color: AppColors.textDisabled),
         ],
       ),
     );
@@ -219,7 +218,7 @@ class _DebtorDetailSheet extends ConsumerWidget {
                 backgroundColor: AppColors.primary.withAlpha(20),
                 child: Text(
                   customer.name[0].toUpperCase(),
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 22,
                       fontWeight: FontWeight.w700),
@@ -253,7 +252,7 @@ class _DebtorDetailSheet extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Outstanding Balance', style: AppTextStyles.bodySmall),
+                    const Text('Outstanding Balance', style: AppTextStyles.bodySmall),
                     Text(
                       CurrencyUtils.format(customer.balance),
                       style: AppTextStyles.headlineMedium.copyWith(color: color),
@@ -264,7 +263,7 @@ class _DebtorDetailSheet extends ConsumerWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('Credit Limit', style: AppTextStyles.bodySmall),
+                      const Text('Credit Limit', style: AppTextStyles.bodySmall),
                       Text(
                         CurrencyUtils.format(customer.creditLimit),
                         style: AppTextStyles.labelLarge,
@@ -297,7 +296,7 @@ class _DebtorDetailSheet extends ConsumerWidget {
           const SizedBox(height: 20),
 
           // Payment History
-          Text('Payment History', style: AppTextStyles.titleMedium),
+          const Text('Payment History', style: AppTextStyles.titleMedium),
           const SizedBox(height: 8),
           historyAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -339,7 +338,7 @@ class _PaymentHistoryRow extends StatelessWidget {
               color: AppColors.success.withAlpha(20),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.south_west_rounded, color: AppColors.success, size: 18),
+            child: const Icon(Icons.south_west_rounded, color: AppColors.success, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -439,7 +438,7 @@ class _RecordPaymentSheetState extends ConsumerState<_RecordPaymentSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Record Payment', style: AppTextStyles.titleLarge),
+            const Text('Record Payment', style: AppTextStyles.titleLarge),
             Text(widget.customerName,
                 style:
                     AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
@@ -454,7 +453,7 @@ class _RecordPaymentSheetState extends ConsumerState<_RecordPaymentSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Outstanding', style: AppTextStyles.bodySmall),
+                    const Text('Outstanding', style: AppTextStyles.bodySmall),
                     Text(CurrencyUtils.format(widget.outstanding),
                         style: AppTextStyles.labelLarge
                             .copyWith(color: AppColors.error)),
@@ -477,7 +476,7 @@ class _RecordPaymentSheetState extends ConsumerState<_RecordPaymentSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _method,
+              initialValue: _method,
               decoration: const InputDecoration(labelText: 'Payment Method'),
               items: const [
                 DropdownMenuItem(value: 'cash', child: Text('Cash')),

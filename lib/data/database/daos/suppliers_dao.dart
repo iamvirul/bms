@@ -1,8 +1,7 @@
+import 'package:bms/data/database/app_database.dart';
+import 'package:bms/data/database/tables/payments_table.dart';
+import 'package:bms/data/database/tables/suppliers_table.dart';
 import 'package:drift/drift.dart';
-
-import '../app_database.dart';
-import '../tables/payments_table.dart';
-import '../tables/suppliers_table.dart';
 
 part 'suppliers_dao.g.dart';
 

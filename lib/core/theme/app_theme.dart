@@ -1,17 +1,15 @@
+import 'package:bms/core/theme/app_colors.dart';
+import 'package:bms/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
-import 'app_text_styles.dart';
 
+// ignore: avoid_classes_with_only_static_members
 abstract final class AppTheme {
   static ThemeData get light {
     const colorScheme = ColorScheme.light(
       primary: AppColors.primary,
-      onPrimary: AppColors.textOnPrimary,
       secondary: AppColors.primaryLight,
       onSecondary: AppColors.textOnPrimary,
       error: AppColors.error,
-      onError: AppColors.textOnPrimary,
-      surface: AppColors.surface,
       onSurface: AppColors.textPrimary,
       surfaceContainerHighest: AppColors.surfaceVariant,
     );

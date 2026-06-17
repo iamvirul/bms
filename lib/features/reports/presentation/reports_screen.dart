@@ -1,17 +1,16 @@
 import 'dart:convert';
 
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
-
 import 'package:bms/core/theme/app_colors.dart';
 import 'package:bms/core/theme/app_text_styles.dart';
 import 'package:bms/core/utils/currency_utils.dart';
 import 'package:bms/data/database/daos/reports_dao.dart';
 import 'package:bms/providers/reports_provider.dart';
 import 'package:bms/shared/widgets/bms_filter_bar.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 Future<void> _shareCsv(String filename, String csv) async {
   await SharePlus.instance.share(
@@ -96,8 +95,8 @@ class _PLTabState extends ConsumerState<_PLTab> {
     super.initState();
     final now = DateTime.now();
     _range = DateTimeRange(
-      start: DateTime(now.year, now.month, 1),
-      end: DateTime(now.year, now.month + 1, 1).subtract(const Duration(seconds: 1)),
+      start: DateTime(now.year, now.month),
+      end: DateTime(now.year, now.month + 1).subtract(const Duration(seconds: 1)),
     );
   }
 
@@ -123,7 +122,7 @@ class _PLTabState extends ConsumerState<_PLTab> {
               final revenue = daily.fold<double>(0, (s, d) => s + d.revenue);
 
               if (revenue == 0) {
-                return Column(
+                return const Column(
                   children: [
                     Expanded(
                       child: _EmptyState(
@@ -202,7 +201,7 @@ class _PLTabState extends ConsumerState<_PLTab> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text('Daily Revenue', style: AppTextStyles.titleMedium),
+                  const Text('Daily Revenue', style: AppTextStyles.titleMedium),
                   const SizedBox(height: 12),
                   _PLChart(daily: daily),
                 ],
@@ -258,7 +257,6 @@ class _PLChart extends StatelessWidget {
           maxY: maxY * 1.2,
           barGroups: barGroups,
           gridData: FlGridData(
-            show: true,
             drawVerticalLine: false,
             getDrawingHorizontalLine: (_) => FlLine(
               color: AppColors.border.withValues(alpha: 0.6),
@@ -281,9 +279,9 @@ class _PLChart extends StatelessWidget {
           ),
           titlesData: FlTitlesData(
             topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false)),
+                ),
             rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false)),
+                ),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -338,7 +336,7 @@ class _StockTab extends ConsumerWidget {
       error: (e, _) => Center(child: Text('Error: $e')),
       data: (rows) {
         if (rows.isEmpty) {
-          return _EmptyState(
+          return const _EmptyState(
             icon: Icons.inventory_2_outlined,
             iconColor: AppColors.primary,
             title: 'No Stock on Hand',
@@ -385,8 +383,8 @@ class _StockTab extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8),
                     child: Row(
                       children: [
                         Expanded(
@@ -544,7 +542,7 @@ class _AgingTab extends ConsumerWidget {
       error: (e, _) => Center(child: Text('Error: $e')),
       data: (rows) {
         if (rows.isEmpty) {
-          return _EmptyState(
+          return const _EmptyState(
             icon: Icons.check_circle_outline,
             iconColor: AppColors.success,
             title: 'All Clear',
@@ -554,7 +552,7 @@ class _AgingTab extends ConsumerWidget {
         }
 
         final total = rows.fold<double>(0, (s, r) => s + r.balance);
-        final bucketAmounts = List.filled(4, 0.0);
+        final bucketAmounts = List<double>.filled(4, 0);
         for (final r in rows) {
           bucketAmounts[r.agingBucket] += r.balance;
         }
@@ -613,7 +611,7 @@ class _AgingTab extends ConsumerWidget {
             const SizedBox(height: 20),
 
             // Pie chart + legend
-            Text('Balance by Age', style: AppTextStyles.titleMedium),
+            const Text('Balance by Age', style: AppTextStyles.titleMedium),
             const SizedBox(height: 12),
             _AgingChart(
               bucketAmounts: bucketAmounts,
@@ -629,7 +627,7 @@ class _AgingTab extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // Debtor list
-            Text('Customers', style: AppTextStyles.titleMedium),
+            const Text('Customers', style: AppTextStyles.titleMedium),
             const SizedBox(height: 8),
             ...rows.map((r) => _DebtorRow(row: r, colors: _bucketColors, labels: _bucketLabels)),
           ],

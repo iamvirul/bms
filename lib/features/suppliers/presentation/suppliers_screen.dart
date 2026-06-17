@@ -1,12 +1,11 @@
+import 'package:bms/core/theme/app_colors.dart';
+import 'package:bms/core/theme/app_text_styles.dart';
+import 'package:bms/core/utils/currency_utils.dart';
+import 'package:bms/data/database/app_database.dart';
+import 'package:bms/providers/suppliers_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/currency_utils.dart';
-import '../../../data/database/app_database.dart';
-import '../../../providers/suppliers_provider.dart';
 
 class SuppliersScreen extends ConsumerWidget {
   const SuppliersScreen({super.key});
@@ -159,7 +158,7 @@ class _SupplierDetailSheet extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Amount Payable', style: AppTextStyles.bodyMedium),
+                const Text('Amount Payable', style: AppTextStyles.bodyMedium),
                 Text(
                   CurrencyUtils.format(supplier.balance),
                   style: AppTextStyles.titleMedium.copyWith(color: balanceColor),
@@ -183,7 +182,7 @@ class _SupplierDetailSheet extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 20),
-          Text('Payment History', style: AppTextStyles.titleMedium),
+          const Text('Payment History', style: AppTextStyles.titleMedium),
           const SizedBox(height: 8),
           historyAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -223,7 +222,7 @@ class _SupplierPaymentRow extends StatelessWidget {
               color: AppColors.primary.withAlpha(15),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.north_east_rounded, color: AppColors.primary, size: 18),
+            child: const Icon(Icons.north_east_rounded, color: AppColors.primary, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -424,7 +423,7 @@ class _SupplierPaymentSheetState extends ConsumerState<_SupplierPaymentSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _method,
+              initialValue: _method,
               decoration: const InputDecoration(labelText: 'Payment Method'),
               items: const [
                 DropdownMenuItem(value: 'cash', child: Text('Cash')),

@@ -1,13 +1,12 @@
 import 'package:bms/core/router/app_router.dart';
 import 'package:bms/data/models/user_model.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bms/features/auth/domain/auth_state.dart';
 import 'package:bms/providers/auth_provider.dart';
+import 'package:bms/shared/widgets/notification_bell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
-import 'notification_bell.dart';
 
 const _kSidebarBg = Color(0xFF111827);
 const _kSidebarHover = Color(0xFF1F2937);
@@ -141,10 +140,10 @@ class _Header extends StatelessWidget {
                   children: [
                     _logoMark,
                     const SizedBox(width: 10),
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text('BMS',
                               style: TextStyle(
                                 color: Colors.white,
@@ -158,7 +157,7 @@ class _Header extends StatelessWidget {
                         ],
                       ),
                     ),
-                    NotificationBell(iconColor: _kSidebarText),
+                    const NotificationBell(iconColor: _kSidebarText),
                   ],
                 ),
         );
@@ -391,7 +390,7 @@ class _SectionLabel extends StatelessWidget {
           color: Color(0xFF4B5563),
           fontSize: 10,
           fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
+          letterSpacing: 1,
         ),
       ),
     );

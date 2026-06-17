@@ -1,7 +1,6 @@
+import 'package:bms/data/database/app_database.dart';
+import 'package:bms/data/database/tables/cheques_table.dart';
 import 'package:drift/drift.dart';
-
-import '../app_database.dart';
-import '../tables/cheques_table.dart';
 
 part 'cheques_dao.g.dart';
 

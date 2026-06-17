@@ -38,8 +38,8 @@ class _AppScaffoldState extends State<AppScaffold> {
       bottomNavigationBar: isWide ? null : _BottomNav(currentLocation: location),
       floatingActionButton: isWide
           ? null
-          : Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+          : const Padding(
+              padding: EdgeInsets.only(bottom: 4),
               child: NotificationBell(iconColor: AppColors.primary),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,

@@ -1,9 +1,8 @@
+import 'package:bms/core/theme/app_colors.dart';
+import 'package:bms/core/theme/app_text_styles.dart';
+import 'package:bms/providers/notifications_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
-import '../../providers/notifications_provider.dart';
 
 class NotificationBell extends ConsumerWidget {
   const NotificationBell({super.key, this.iconColor = Colors.white});
@@ -16,7 +15,7 @@ class NotificationBell extends ConsumerWidget {
     final count = alertsAsync.when(
       data: (alerts) => alerts.length,
       loading: () => 0,
-      error: (_, __) => 0,
+      error: (_, _) => 0,
     );
 
     return Stack(
@@ -72,7 +71,6 @@ class _AlertsPanel extends ConsumerWidget {
     final alertsAsync = ref.watch(notificationsProvider);
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.5,
       minChildSize: 0.3,
       maxChildSize: 0.9,
       expand: false,
@@ -90,10 +88,10 @@ class _AlertsPanel extends ConsumerWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.check_circle_outline,
+                          const Icon(Icons.check_circle_outline,
                               size: 48, color: AppColors.success),
                           const SizedBox(height: 12),
-                          Text('All clear', style: AppTextStyles.titleMedium),
+                          const Text('All clear', style: AppTextStyles.titleMedium),
                           const SizedBox(height: 4),
                           Text('No alerts right now.',
                               style: AppTextStyles.bodySmall.copyWith(
@@ -104,7 +102,7 @@ class _AlertsPanel extends ConsumerWidget {
                   : ListView.separated(
                       controller: scrollController,
                       itemCount: alerts.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const Divider(height: 1, indent: 16, endIndent: 16),
                       itemBuilder: (_, i) => _AlertTile(alert: alerts[i]),
                     ),
@@ -142,7 +140,7 @@ class _PanelHandle extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text('Alerts', style: AppTextStyles.titleLarge),
+                const Text('Alerts', style: AppTextStyles.titleLarge),
               ],
             ),
           ),
