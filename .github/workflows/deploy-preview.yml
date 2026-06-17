@@ -4,10 +4,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
-permissions:
-  contents: write
-  pull-requests: write
-
 concurrency:
   group: pr-preview-${{ github.event.number }}
   cancel-in-progress: true
@@ -17,14 +13,19 @@ jobs:
     if: github.event.action != 'closed'
     name: Deploy preview
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     environment:
       name: pr-preview-${{ github.event.number }}
       url: https://getbms.github.io/bms/pr-${{ github.event.number }}/
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2  # subosito/flutter-action@v2
         with:
           flutter-version: '3.44.2'
           channel: stable
@@ -36,7 +37,7 @@ jobs:
 
       - run: flutter build web --release --base-href /bms/pr-${{ github.event.number }}/
 
-      - uses: peaceiris/actions-gh-pages@v4
+      - uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453  # peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
@@ -44,7 +45,7 @@ jobs:
           keep_files: true
 
       - name: Post preview URL comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # actions/github-script@v7
         with:
           script: |
             const prNumber = ${{ github.event.number }};
@@ -80,9 +81,11 @@ jobs:
     if: github.event.action == 'closed'
     name: Remove preview
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # actions/checkout@v4.2.2
         with:
           ref: gh-pages
 
