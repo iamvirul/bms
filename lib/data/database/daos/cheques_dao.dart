@@ -37,6 +37,18 @@ class ChequesDao extends DatabaseAccessor<AppDatabase> with _$ChequesDaoMixin {
         .get();
   }
 
+  Future<List<Cheque>> getOverdueCheques() {
+    final now = DateTime.now();
+    return (select(cheques)
+          ..where(
+            (c) =>
+                c.dueDate.isSmallerThanValue(now) &
+                c.status.isIn(['pending', 'deposited']),
+          )
+          ..orderBy([(c) => OrderingTerm.asc(c.dueDate)]))
+        .get();
+  }
+
   Future<void> updateStatus(String id, String status) =>
       (update(cheques)..where((c) => c.id.equals(id))).write(
         ChequesCompanion(

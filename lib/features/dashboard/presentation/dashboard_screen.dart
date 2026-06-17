@@ -48,43 +48,50 @@ class DashboardScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             children: [
               // ── KPI Grid ────────────────────────────────────────────────
-              GridView.extent(
-                maxCrossAxisExtent: 300,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 3,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  StatCard(
-                    label: "Today's Sales",
-                    value: CurrencyUtils.format(s.todaySales),
-                    icon: Icons.receipt_long_outlined,
-                    color: AppColors.success,
-                    onTap: () => context.go(AppRoutes.pos),
-                  ),
-                  StatCard(
-                    label: 'Low Stock Items',
-                    value: '${s.lowStockCount}',
-                    icon: Icons.warning_amber_outlined,
-                    color: AppColors.warning,
-                    onTap: () => context.go(AppRoutes.inventory),
-                  ),
-                  StatCard(
-                    label: 'Cheques Due (7d)',
-                    value: '${s.chequesThisWeek}',
-                    icon: Icons.calendar_today_outlined,
-                    color: AppColors.primary,
-                    onTap: () => context.go(AppRoutes.cheques),
-                  ),
-                  StatCard(
-                    label: 'Total Receivables',
-                    value: CurrencyUtils.format(s.totalDebtors),
-                    icon: Icons.people_outline,
-                    color: AppColors.error,
-                    onTap: () => context.go(AppRoutes.customers),
-                  ),
-                ],
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final w = constraints.maxWidth;
+                  final cols = w < 480 ? 2 : w < 840 ? 3 : 4;
+                  final ratio = w < 480 ? 2.1 : 3.0;
+                  return GridView.count(
+                    crossAxisCount: cols,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: ratio,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      StatCard(
+                        label: "Today's Sales",
+                        value: CurrencyUtils.format(s.todaySales),
+                        icon: Icons.receipt_long_outlined,
+                        color: AppColors.success,
+                        onTap: () => context.go(AppRoutes.pos),
+                      ),
+                      StatCard(
+                        label: 'Low Stock Items',
+                        value: '${s.lowStockCount}',
+                        icon: Icons.warning_amber_outlined,
+                        color: AppColors.warning,
+                        onTap: () => context.go(AppRoutes.inventory),
+                      ),
+                      StatCard(
+                        label: 'Cheques Due (7d)',
+                        value: '${s.chequesThisWeek}',
+                        icon: Icons.calendar_today_outlined,
+                        color: AppColors.primary,
+                        onTap: () => context.go(AppRoutes.cheques),
+                      ),
+                      StatCard(
+                        label: 'Total Receivables',
+                        value: CurrencyUtils.format(s.totalDebtors),
+                        icon: Icons.people_outline,
+                        color: AppColors.error,
+                        onTap: () => context.go(AppRoutes.customers),
+                      ),
+                    ],
+                  );
+                },
               ),
 
               const SizedBox(height: 20),

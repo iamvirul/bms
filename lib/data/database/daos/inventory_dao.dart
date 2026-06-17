@@ -55,6 +55,16 @@ class InventoryDao extends DatabaseAccessor<AppDatabase> with _$InventoryDaoMixi
         );
   }
 
+  Future<List<Product>> getLowStockProducts() async {
+    final query = select(stock).join([
+      innerJoin(products, products.id.equalsExp(stock.productId)),
+    ]);
+    query.where(stock.qty.isSmallerOrEqualValue(0) |
+        CustomExpression<bool>('stock.qty <= products.reorder_level'));
+    final rows = await query.get();
+    return rows.map((r) => r.readTable(products)).toList();
+  }
+
   Future<void> upsertStock(StockCompanion entry) =>
       into(stock).insertOnConflictUpdate(entry);
 

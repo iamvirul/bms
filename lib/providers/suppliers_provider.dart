@@ -12,6 +12,11 @@ import 'database_provider.dart';
 final suppliersStreamProvider = StreamProvider.autoDispose<List<Supplier>>(
     (ref) => ref.watch(suppliersDaoProvider).watchAll());
 
+final supplierPaymentHistoryProvider =
+    FutureProvider.autoDispose.family<List<SupplierPayment>, String>(
+        (ref, supplierId) =>
+            ref.watch(suppliersDaoProvider).getPaymentsForSupplier(supplierId));
+
 class SupplierActions {
   SupplierActions(this._ref);
   final Ref _ref;

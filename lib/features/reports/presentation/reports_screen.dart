@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:bms/core/theme/app_colors.dart';
 import 'package:bms/core/theme/app_text_styles.dart';
@@ -8,6 +12,20 @@ import 'package:bms/core/utils/currency_utils.dart';
 import 'package:bms/data/database/daos/reports_dao.dart';
 import 'package:bms/providers/reports_provider.dart';
 import 'package:bms/shared/widgets/bms_filter_bar.dart';
+
+Future<void> _shareCsv(String filename, String csv) async {
+  await SharePlus.instance.share(
+    ShareParams(
+      files: [
+        XFile.fromData(
+          utf8.encode(csv),
+          name: filename,
+          mimeType: 'text/csv',
+        ),
+      ],
+    ),
+  );
+}
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -155,7 +173,35 @@ class _PLTabState extends ConsumerState<_PLTab> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.download_outlined, size: 16),
+                      label: const Text('Export CSV'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        textStyle: AppTextStyles.bodySmall,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        final df = DateFormat('yyyy-MM-dd');
+                        final lines = [
+                          'Date,Revenue,COGS,Gross Profit,Margin %',
+                          ...daily.map((d) {
+                            final gp = d.revenue - d.cogs;
+                            final m = d.revenue > 0 ? gp / d.revenue * 100 : 0;
+                            return '${df.format(d.date)},${d.revenue.toStringAsFixed(2)},${d.cogs.toStringAsFixed(2)},${gp.toStringAsFixed(2)},${m.toStringAsFixed(2)}';
+                          }),
+                        ];
+                        _shareCsv(
+                          'pl_${df.format(_range.start)}_${df.format(_range.end)}.csv',
+                          lines.join('\n'),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   Text('Daily Revenue', style: AppTextStyles.titleMedium),
                   const SizedBox(height: 12),
                   _PLChart(daily: daily),
@@ -314,7 +360,31 @@ class _StockTab extends ConsumerWidget {
                     totalValue: totalValue,
                     itemCount: rows.length,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.download_outlined, size: 16),
+                      label: const Text('Export CSV'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        textStyle: AppTextStyles.bodySmall,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        final lines = [
+                          'Product,Qty,Unit Cost,Total Value',
+                          ...rows.map((r) =>
+                              '"${r.name}",${r.qty.toStringAsFixed(2)},${r.costPrice.toStringAsFixed(2)},${r.value.toStringAsFixed(2)}'),
+                        ];
+                        _shareCsv(
+                          'stock_valuation_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.csv',
+                          lines.join('\n'),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
@@ -514,6 +584,27 @@ class _AgingTab extends ConsumerWidget {
                               style: AppTextStyles.bodySmall),
                         ],
                       ),
+                    ),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.download_outlined, size: 16),
+                      label: const Text('CSV'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        textStyle: AppTextStyles.bodySmall,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        const buckets = ['0-30d', '31-60d', '61-90d', '90+d'];
+                        final lines = [
+                          'Customer,Balance,Aging Bucket',
+                          ...rows.map((r) =>
+                              '"${r.name}",${r.balance.toStringAsFixed(2)},${buckets[r.agingBucket.clamp(0, 3)]}'),
+                        ];
+                        _shareCsv(
+                          'debtor_aging_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.csv',
+                          lines.join('\n'),
+                        );
+                      },
                     ),
                   ],
                 ),

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'notification_bell.dart';
+
 const _kSidebarBg = Color(0xFF111827);
 const _kSidebarHover = Color(0xFF1F2937);
 const _kSidebarActive = Color(0xFF1D4ED8);
@@ -156,6 +158,7 @@ class _Header extends StatelessWidget {
                         ],
                       ),
                     ),
+                    NotificationBell(iconColor: _kSidebarText),
                   ],
                 ),
         );

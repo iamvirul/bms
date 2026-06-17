@@ -54,6 +54,12 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase> with _$SuppliersDaoMixi
   Future<List<PurchaseItem>> getItemsForPurchase(String purchaseId) =>
       (select(purchaseItems)..where((i) => i.purchaseId.equals(purchaseId))).get();
 
+  Future<List<SupplierPayment>> getPaymentsForSupplier(String supplierId) =>
+      (select(supplierPayments)
+            ..where((p) => p.supplierId.equals(supplierId))
+            ..orderBy([(p) => OrderingTerm.desc(p.createdAt)]))
+          .get();
+
   Future<String> nextGrnNumber() async {
     return transaction(() async {
       final maxExpr = purchases.grnNumber.max();
