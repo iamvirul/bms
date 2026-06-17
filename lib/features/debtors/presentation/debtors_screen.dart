@@ -217,7 +217,7 @@ class _DebtorDetailSheet extends ConsumerWidget {
                 radius: 28,
                 backgroundColor: AppColors.primary.withAlpha(20),
                 child: Text(
-                  customer.name[0].toUpperCase(),
+                  customer.name.isNotEmpty ? customer.name[0].toUpperCase() : '?',
                   style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 22,
