@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:bms/data/database/app_database.dart';
 import 'package:bms/providers/pos_provider.dart';
 import 'package:flutter/services.dart';
