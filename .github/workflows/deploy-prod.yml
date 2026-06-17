@@ -1,8 +1,12 @@
 name: Deploy to Production
 
 on:
-  push:
+  # Auto-triggers only when staging completes successfully
+  workflow_run:
+    workflows: ["Deploy to Staging"]
+    types: [completed]
     branches: [master]
+  # Keep manual trigger as fallback
   workflow_dispatch:
 
 permissions:
@@ -16,12 +20,19 @@ jobs:
   deploy:
     name: Deploy production
     runs-on: ubuntu-latest
+    # Skip if triggered by workflow_run and staging did not succeed
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     environment:
       name: production
       url: https://getbms.github.io/bms/
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # When triggered by workflow_run, deploy the exact commit staging used
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - uses: subosito/flutter-action@v2
         with:
@@ -40,4 +51,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           keep_files: true
-          commit_message: 'deploy: production @ ${{ github.sha }}'
+          commit_message: 'deploy: production @ ${{ github.event.workflow_run.head_sha || github.sha }}'

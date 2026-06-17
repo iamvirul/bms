@@ -1,6 +1,10 @@
 name: Deploy to Staging
 
 on:
+  # Auto-triggers when a PR is merged to master
+  push:
+    branches: [master]
+  # Keep manual trigger as fallback for re-runs or hotfixes
   workflow_dispatch:
     inputs:
       ref:
@@ -19,8 +23,6 @@ jobs:
   deploy:
     name: Deploy staging
     runs-on: ubuntu-latest
-    # Configure this environment in GitHub Settings > Environments > staging
-    # to add required reviewers for manual approval before each deploy.
     environment:
       name: staging
       url: https://getbms.github.io/bms/staging/
@@ -28,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ inputs.ref || github.sha }}
 
       - uses: subosito/flutter-action@v2
         with:
@@ -48,4 +50,4 @@ jobs:
           publish_dir: ./build/web
           destination_dir: staging
           keep_files: true
-          commit_message: 'deploy: staging from ${{ inputs.ref }} @ ${{ github.sha }}'
+          commit_message: 'deploy: staging @ ${{ github.sha }}'
