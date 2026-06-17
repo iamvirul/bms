@@ -96,7 +96,7 @@ class _PLTabState extends ConsumerState<_PLTab> {
     final now = DateTime.now();
     _range = DateTimeRange(
       start: DateTime(now.year, now.month),
-      end: DateTime(now.year, now.month + 1).subtract(const Duration(seconds: 1)),
+      end: DateTime(now.year, now.month + 1).subtract(const Duration(microseconds: 1)),
     );
   }
 
