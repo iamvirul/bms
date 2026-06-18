@@ -7,6 +7,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Dashboard KPI drill-down navigation: tapping "Today's Sales" filters invoices to today, "Low Stock" opens inventory pre-filtered to low-stock items, "Total Receivables" goes to the Debtors screen
+- User management: last login timestamp and password-changed-at timestamp recorded and displayed in the user detail sheet
+- User self-service password change: any user can change their own password from the user detail sheet (current password required)
+- Petty cash rejection notes: managers can enter an optional reason when rejecting a petty cash request; reason is displayed in the entry list
+- Petty cash approval timestamp: `approvedAt` recorded on both approve and reject actions
+- Cheque lifecycle tracking: deposit date, bounce date, bounce reason, and re-presentation count columns added; full event timeline shown in cheque detail sheet
+- Cheque actions: Deposit (with date picker), Bounce (date + optional reason), Re-present (resets to pending, increments counter), Clear
+- Purchase Orders: create POs with supplier, line items (qty + cost), notes, and auto-generated PO number (PO-00001 format); PO list with status badges (Draft / Sent / Partial / Received / Cancelled) in a dedicated GRN tab
+- GRN supplier invoice linking: optional supplier invoice number and invoice amount fields on GRN confirmation; discrepancy warning shown when invoice amount differs from received total
+- GRN to PO linking: open GRNs can be linked to an existing PO; confirming a GRN automatically marks the linked PO as received
+- Language switching wired to `MaterialApp.locale`: selecting English / Sinhala / Tamil in Settings now applies the locale to the entire app immediately; preference persisted across sessions
+- Database connection settings (developer role): choose between SQLite (local, default), MySQL local, or MySQL remote; MySQL connection fields (host, port, database name, username, password) stored securely; settings persist across sessions; MySQL sync engine planned for a future release
+
+### Fixed
+- Web platform: replaced `flutter_secure_storage` with an in-memory `SessionStorage` wrapper on web to avoid `window.crypto.subtle.generateKey()` failure in sandboxed / non-HTTPS contexts
+- Language preference was saved to storage but never applied to `MaterialApp`; language switching now takes effect immediately without a restart
+
 - Debtors screen: tap any debtor to open a detail sheet showing outstanding balance, credit limit, payment history, and a "Record Payment" button
 - Customer payment recording: amount, payment method (cash/card/bank transfer/cheque), and optional notes; updates balance immediately
 - Supplier detail sheet: payment history section listing past payments with method, notes, amount, and date

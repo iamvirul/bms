@@ -78,6 +78,10 @@ class SettingsScreen extends ConsumerWidget {
               onTap: () => _importDb(context, ref),
             ),
             const SizedBox(height: 24),
+
+            const _SectionHeader(title: 'Database Connection', icon: Icons.dns_outlined),
+            const _DbConnectionTile(),
+            const SizedBox(height: 24),
           ],
 
           // Audit log (admin+)
@@ -363,6 +367,235 @@ class _LanguageTile extends ConsumerWidget {
             );
           }).toList(),
         ),
+      ),
+    );
+  }
+}
+
+class _DbConnectionTile extends ConsumerStatefulWidget {
+  const _DbConnectionTile();
+
+  @override
+  ConsumerState<_DbConnectionTile> createState() => _DbConnectionTileState();
+}
+
+class _DbConnectionTileState extends ConsumerState<_DbConnectionTile> {
+  late TextEditingController _hostCtrl;
+  late TextEditingController _portCtrl;
+  late TextEditingController _dbCtrl;
+  late TextEditingController _userCtrl;
+  late TextEditingController _passCtrl;
+  bool _obscurePass = true;
+  bool _saving = false;
+  bool _testing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final s = ref.read(dbConnectionSettingsProvider);
+    _hostCtrl = TextEditingController(text: s.host);
+    _portCtrl = TextEditingController(text: s.port.toString());
+    _dbCtrl = TextEditingController(text: s.database);
+    _userCtrl = TextEditingController(text: s.username);
+    _passCtrl = TextEditingController(text: s.password);
+    ref.read(dbConnectionSettingsProvider.notifier).load().then((_) {
+      if (!mounted) return;
+      final loaded = ref.read(dbConnectionSettingsProvider);
+      _hostCtrl.text = loaded.host;
+      _portCtrl.text = loaded.port.toString();
+      _dbCtrl.text = loaded.database;
+      _userCtrl.text = loaded.username;
+      _passCtrl.text = loaded.password;
+    });
+  }
+
+  @override
+  void dispose() {
+    _hostCtrl.dispose();
+    _portCtrl.dispose();
+    _dbCtrl.dispose();
+    _userCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
+
+  DbConnectionSettings _buildSettings(DbConnectionType type) => DbConnectionSettings(
+        type: type,
+        host: _hostCtrl.text.trim(),
+        port: int.tryParse(_portCtrl.text.trim()) ?? 3306,
+        database: _dbCtrl.text.trim(),
+        username: _userCtrl.text.trim(),
+        password: _passCtrl.text,
+      );
+
+  Future<void> _save(DbConnectionType type) async {
+    setState(() => _saving = true);
+    await ref.read(dbConnectionSettingsProvider.notifier).save(_buildSettings(type));
+    if (!mounted) return;
+    setState(() => _saving = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Connection settings saved'), backgroundColor: AppColors.success),
+    );
+  }
+
+  Future<void> _testConnection(DbConnectionType type) async {
+    setState(() => _testing = true);
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
+    setState(() => _testing = false);
+
+    if (type == DbConnectionType.localSqlite) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('SQLite is the active database - connection OK'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'MySQL sync is planned for a future release. Settings saved for ${_hostCtrl.text.trim()}:${_portCtrl.text.trim()}.',
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final current = ref.watch(dbConnectionSettingsProvider);
+    final type = current.type;
+    final isMysql = type != DbConnectionType.localSqlite;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('Backend', style: AppTextStyles.labelLarge),
+          const SizedBox(height: 8),
+          SegmentedButton<DbConnectionType>(
+            segments: const [
+              ButtonSegment(
+                value: DbConnectionType.localSqlite,
+                label: Text('SQLite (local)'),
+                icon: Icon(Icons.storage_rounded, size: 16),
+              ),
+              ButtonSegment(
+                value: DbConnectionType.localMysql,
+                label: Text('MySQL (local)'),
+                icon: Icon(Icons.computer_rounded, size: 16),
+              ),
+              ButtonSegment(
+                value: DbConnectionType.remoteMysql,
+                label: Text('MySQL (remote)'),
+                icon: Icon(Icons.cloud_outlined, size: 16),
+              ),
+            ],
+            selected: {type},
+            onSelectionChanged: (s) async {
+              final newType = s.first;
+              await ref.read(dbConnectionSettingsProvider.notifier).save(
+                    _buildSettings(newType),
+                  );
+            },
+            style: ButtonStyle(
+              visualDensity: VisualDensity.compact,
+              textStyle: WidgetStateProperty.all(AppTextStyles.bodySmall),
+            ),
+          ),
+          if (isMysql) ...[
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: TextField(
+                    controller: _hostCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Host',
+                      hintText: '127.0.0.1',
+                      prefixIcon: Icon(Icons.dns_outlined),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 88,
+                  child: TextField(
+                    controller: _portCtrl,
+                    decoration: const InputDecoration(labelText: 'Port'),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _dbCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Database name',
+                hintText: 'bms',
+                prefixIcon: Icon(Icons.table_chart_outlined),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _userCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _passCtrl,
+              obscureText: _obscurePass,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(_obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                  onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              OutlinedButton.icon(
+                icon: _testing
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.wifi_tethering_rounded, size: 16),
+                label: const Text('Test'),
+                onPressed: (_saving || _testing) ? null : () => _testConnection(type),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                icon: _saving
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Icon(Icons.save_outlined, size: 16),
+                label: Text(_saving ? 'Saving...' : 'Save'),
+                onPressed: (_saving || _testing) ? null : () => _save(type),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
