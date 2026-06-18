@@ -9,7 +9,6 @@ import 'package:uuid/uuid.dart';
 typedef _DateRange = ({DateTime from, DateTime to});
 
 // Manual NotifierProvider for date range - no codegen needed.
-// Screens: ref.read(pettyCashDateRangeProvider.notifier).set(from, to)
 final pettyCashDateRangeProvider =
     NotifierProvider<_PettyCashDateRangeNotifier, _DateRange>(
   _PettyCashDateRangeNotifier.new,

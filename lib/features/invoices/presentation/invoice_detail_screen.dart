@@ -148,8 +148,6 @@ class InvoiceDetailScreen extends ConsumerWidget {
   }
 }
 
-// ── Detail Body ──────────────────────────────────────────────────────────────
-
 class _DetailBody extends ConsumerWidget {
   const _DetailBody({
     required this.detail,
@@ -178,7 +176,6 @@ class _DetailBody extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        // Status banner
         if (isVoided)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -211,7 +208,6 @@ class _DetailBody extends ConsumerWidget {
 
         if (isVoided) const SizedBox(height: 16),
 
-        // Header card
         _Card(
           child: Column(
             children: [
@@ -236,7 +232,6 @@ class _DetailBody extends ConsumerWidget {
 
         const SizedBox(height: 16),
 
-        // Items table
         _Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +312,6 @@ class _DetailBody extends ConsumerWidget {
 
         const SizedBox(height: 16),
 
-        // Totals card
         _Card(
           child: Column(
             children: [
@@ -347,7 +341,6 @@ class _DetailBody extends ConsumerWidget {
 
         const SizedBox(height: 24),
 
-        // Actions
         Wrap(
           spacing: 12,
           runSpacing: 12,
@@ -387,7 +380,6 @@ class _DetailBody extends ConsumerWidget {
           ],
         ),
 
-        // Return history
         returnsAsync.when(
           loading: () => const SizedBox.shrink(),
           error: (_, _) => const SizedBox.shrink(),
@@ -430,8 +422,6 @@ class _DetailBody extends ConsumerWidget {
         'Dec'
       ][m];
 }
-
-// ── Return History ───────────────────────────────────────────────────────────
 
 class _ReturnHistory extends StatelessWidget {
   const _ReturnHistory({required this.returns});
@@ -504,8 +494,6 @@ class _ReturnHistory extends StatelessWidget {
         _ => type,
       };
 }
-
-// ── Process Return Sheet ─────────────────────────────────────────────────────
 
 class _ProcessReturnSheet extends ConsumerStatefulWidget {
   const _ProcessReturnSheet({required this.detail});
@@ -662,7 +650,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
           key: _form,
           child: Column(
             children: [
-              // Handle
               Container(
                 margin: const EdgeInsets.only(top: 12, bottom: 8),
                 width: 36,
@@ -673,7 +660,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
                 ),
               ),
 
-              // Header
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -703,7 +689,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
                   controller: scrollCtrl,
                   padding: const EdgeInsets.all(20),
                   children: [
-                    // Items section
                     const Text('Select Items to Return',
                         style: AppTextStyles.labelLarge),
                     const SizedBox(height: 12),
@@ -717,7 +702,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
 
                     const SizedBox(height: 20),
 
-                    // Return type
                     const Text('Return Type', style: AppTextStyles.labelLarge),
                     const SizedBox(height: 8),
                     _ReturnTypeSelector(
@@ -727,7 +711,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
 
                     const SizedBox(height: 20),
 
-                    // Reason
                     const Text('Reason', style: AppTextStyles.labelLarge),
                     const SizedBox(height: 8),
                     TextFormField(
@@ -741,7 +724,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
 
                     const SizedBox(height: 24),
 
-                    // Total
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -765,7 +747,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
                 ),
               ),
 
-              // Bottom actions
               const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -806,8 +787,6 @@ class _ProcessReturnSheetState extends ConsumerState<_ProcessReturnSheet> {
     );
   }
 }
-
-// ── Return Item Row ──────────────────────────────────────────────────────────
 
 class _ReturnItemRow extends StatelessWidget {
   const _ReturnItemRow({
@@ -852,8 +831,6 @@ class _ReturnItemRow extends StatelessWidget {
     );
   }
 }
-
-// ── Qty Stepper ──────────────────────────────────────────────────────────────
 
 class _QtyStepper extends StatelessWidget {
   const _QtyStepper({
@@ -944,8 +921,6 @@ class _QtyStepper extends StatelessWidget {
   }
 }
 
-// ── Return Type Selector ─────────────────────────────────────────────────────
-
 class _ReturnTypeSelector extends StatelessWidget {
   const _ReturnTypeSelector({required this.value, required this.onChanged});
   final String value;
@@ -1008,8 +983,6 @@ class _ReturnTypeSelector extends StatelessWidget {
     );
   }
 }
-
-// ── Shared UI Widgets ────────────────────────────────────────────────────────
 
 class _Card extends StatelessWidget {
   const _Card({required this.child});

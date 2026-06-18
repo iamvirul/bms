@@ -118,7 +118,6 @@ class _ByMonthTab extends ConsumerWidget {
 
     return Column(
       children: [
-        // Month nav header
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
@@ -133,7 +132,6 @@ class _ByMonthTab extends ConsumerWidget {
             ],
           ),
         ),
-        // Weekday header row
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
@@ -149,13 +147,11 @@ class _ByMonthTab extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 4),
-        // Calendar grid
         Expanded(
           child: chequesAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text('Error: $e')),
             data: (cheques) {
-              // Group cheques by day-of-month
               final byDay = <int, List<Cheque>>{};
               for (final c in cheques) {
                 byDay.putIfAbsent(c.dueDate.day, () => []).add(c);

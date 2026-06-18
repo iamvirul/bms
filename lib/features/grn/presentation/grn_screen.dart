@@ -59,7 +59,6 @@ class _GrnScreenState extends ConsumerState<GrnScreen>
   }
 }
 
-
 class _NewGrnTab extends ConsumerWidget {
   const _NewGrnTab();
 
@@ -69,11 +68,9 @@ class _NewGrnTab extends ConsumerWidget {
 
     return Column(
       children: [
-        // Step 1: Supplier selector
         _SupplierCard(selected: state.supplier),
         const Divider(height: 1),
 
-        // Step 2: Items
         Expanded(
           child: state.supplier == null
               ? const Center(
@@ -86,7 +83,6 @@ class _NewGrnTab extends ConsumerWidget {
         ),
         const Divider(height: 1),
 
-        // Footer total + confirm
         if (state.supplier != null && state.items.isNotEmpty)
           _GrnFooter(state: state),
       ],
@@ -468,7 +464,6 @@ class _GrnFooter extends ConsumerWidget {
     );
   }
 }
-
 
 class _GrnHistoryTab extends ConsumerWidget {
   const _GrnHistoryTab();

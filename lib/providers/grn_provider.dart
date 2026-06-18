@@ -103,7 +103,6 @@ class GrnNotifier extends Notifier<GrnState> {
     if (!state.canSubmit) return null;
     state = state.copyWith(isSubmitting: true);
 
-    // Capture immutable locals
     final supplier = state.supplier!;
     final items = List<GrnCartItem>.from(state.items);
     final total = state.total;
@@ -142,7 +141,6 @@ class GrnNotifier extends Notifier<GrnState> {
               .toList(),
         );
 
-        // Stock in + update cost price
         for (final item in items) {
           final current = await inventoryDao.getStock(item.product.id);
           final newQty = (current?.qty ?? 0) + item.qty;
@@ -161,11 +159,9 @@ class GrnNotifier extends Notifier<GrnState> {
             refId: Value(purchaseId),
             refType: const Value('purchase'),
           ));
-          // Update cost price on product
           await inventoryDao.updateCostPrice(item.product.id, item.costPrice);
         }
 
-        // Update supplier balance
         await suppliersDao.updateBalance(supplier.id, total);
 
         await auditDao.log(

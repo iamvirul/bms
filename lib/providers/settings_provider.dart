@@ -10,12 +10,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-
 const _langKey = 'app_language';
 const _storeNameKey = 'store_name';
 const _storeAddressKey = 'store_address';
 const _storePhoneKey = 'store_phone';
-
 
 class StoreInfo {
   const StoreInfo({
@@ -85,15 +83,11 @@ const supportedLanguages = [
   ('ta', 'Tamil'),
 ];
 
-// Audit log provider 
-
 final auditLogProvider =
     FutureProvider.autoDispose.family<List<AuditLogData>, String?>(
   (ref, entityType) =>
       ref.watch(auditLogDaoProvider).getAll(entityType: entityType),
 );
-
-// Settings actions (export / import / CSV) 
 
 class SettingsActions {
   SettingsActions(this._ref);
@@ -111,8 +105,6 @@ class SettingsActions {
     final s = _ref.read(currentAuthStateProvider);
     return s is Authenticated ? s.user.name : 'system';
   }
-
-  // CSV product import 
 
   /// Returns (inserted, skipped, errors).
   Future<(int, int, List<String>)> importProductsFromCsv() async {
@@ -191,8 +183,6 @@ class SettingsActions {
     return (inserted, skipped, errors);
   }
 
-  // Database export as JSON
-
   Future<Uint8List> exportDatabaseAsJson() async {
     final db = _db;
     final products = await db.select(db.products).get();
@@ -251,8 +241,6 @@ class SettingsActions {
     return Uint8List.fromList(utf8.encode(const JsonEncoder.withIndent('  ').convert(payload)));
   }
 
-  // Database import from JSON
-
   Future<String> importDatabaseFromJson() async {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
@@ -268,7 +256,6 @@ class SettingsActions {
       final payload = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
       final db = _db;
 
-      // Products
       for (final Map<String, dynamic> p in ((payload['products'] as List?)?.cast<Map<String, dynamic>>() ?? [])) {
         await db.into(db.products).insert(
           ProductsCompanion.insert(
@@ -284,7 +271,6 @@ class SettingsActions {
         );
       }
 
-      // Customers
       for (final Map<String, dynamic> c in ((payload['customers'] as List?)?.cast<Map<String, dynamic>>() ?? [])) {
         await db.into(db.customers).insert(
           CustomersCompanion.insert(
@@ -298,7 +284,6 @@ class SettingsActions {
         );
       }
 
-      // Stock
       for (final Map<String, dynamic> s in ((payload['stock'] as List?)?.cast<Map<String, dynamic>>() ?? [])) {
         await db.into(db.stock).insert(
           StockCompanion.insert(
@@ -339,8 +324,6 @@ class SettingsActions {
     }
     return null;
   }
-
-  // CSV helpers
 
   List<String> _parseCsvLine(String line) {
     final cols = <String>[];

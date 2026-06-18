@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 // Manual providers - riverpod_generator cannot serialize Drift-generated types
-// in function signatures during the build phase, so we use the manual API.
 
 final chequesMonthStreamProvider =
     StreamProvider.autoDispose.family<List<Cheque>, (int, int)>((ref, args) {

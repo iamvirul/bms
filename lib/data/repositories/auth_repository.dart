@@ -69,7 +69,6 @@ class AuthRepository {
       isActive: user.isActive,
     );
 
-    // Persist session to secure storage
     await _storage.write(key: AppConstants.sessionKey, value: user.id);
     appLogger.i('Login', error: {'userId': user.id, 'role': user.role});
 

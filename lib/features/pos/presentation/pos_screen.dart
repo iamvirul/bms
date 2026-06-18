@@ -78,7 +78,6 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       ),
       body: Row(
         children: [
-          // Left panel: product search + grid
           Expanded(
             flex: 6,
             child: Column(
@@ -120,7 +119,6 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             ),
           ),
           const VerticalDivider(width: 1),
-          // Right panel: cart
           const SizedBox(
             width: 380,
             child: _CartPanel(),
@@ -492,7 +490,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
 
   Future<void> _checkout() async {
     final notifier = ref.read(posProvider.notifier);
-    // Capture state before checkout clears the cart
     final snapshot = ref.read(posProvider);
     try {
       final invoiceNo = await notifier.checkout();
@@ -538,7 +535,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
 
     return Column(
       children: [
-        // Header
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           color: AppColors.surfaceVariant,
@@ -550,7 +546,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
             ],
           ),
         ),
-        // Cart items
         Expanded(
           child: state.isEmpty
               ? const Center(child: Text('Cart is empty', style: AppTextStyles.bodySmall))
@@ -586,7 +581,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                                   ],
                                 ),
                               ),
-                              // Qty stepper with step awareness + tap-to-edit
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -654,14 +648,12 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                   },
                 ),
         ),
-        // Bottom panel
         const Divider(height: 1),
         Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Subtotal
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -670,7 +662,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                 ],
               ),
               const SizedBox(height: 4),
-              // Bill discount
               Row(
                 children: [
                   GestureDetector(
@@ -708,7 +699,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                 ],
               ),
               const SizedBox(height: 12),
-              // Customer
               OutlinedButton.icon(
                 icon: const Icon(Icons.person_outline, size: 18),
                 label: Text(state.customer?.name ?? 'Set Customer (optional)'),
@@ -727,7 +717,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                   ),
                 ),
               const SizedBox(height: 12),
-              // Payment method
               Row(
                 children: [
                   _PayMethodBtn(
@@ -752,7 +741,6 @@ class _CartPanelState extends ConsumerState<_CartPanel> {
                   ),
                 ],
               ),
-              // Cash tendered + change
               if (state.paymentMethod == 'cash') ...[
                 const SizedBox(height: 12),
                 TextField(
@@ -918,9 +906,6 @@ class _CustomerSearchDialogState extends ConsumerState<_CustomerSearchDialog> {
   }
 }
 
-
-// ── Unit-type helpers (shared across cart and product card) ──────────────────
-
 bool _isDecimalUnit(String unitType) =>
     const {'kg', 'g', 'l', 'ml'}.contains(unitType.toLowerCase());
 
@@ -971,7 +956,6 @@ class _ScanButton extends ConsumerWidget {
     );
   }
 }
-
 
 class _BarcodeScanDialog extends StatefulWidget {
   const _BarcodeScanDialog({
@@ -1028,7 +1012,6 @@ class _BarcodeScanDialogState extends State<_BarcodeScanDialog> {
         height: 440,
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
               child: Row(
@@ -1047,7 +1030,6 @@ class _BarcodeScanDialogState extends State<_BarcodeScanDialog> {
             ),
             const Divider(height: 1),
 
-            // Scanner viewport
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
@@ -1057,7 +1039,6 @@ class _BarcodeScanDialogState extends State<_BarcodeScanDialog> {
                       controller: _controller,
                       onDetect: _onDetect,
                     ),
-                    // Scan window overlay
                     Center(
                       child: Container(
                         width: 220,
@@ -1068,9 +1049,7 @@ class _BarcodeScanDialogState extends State<_BarcodeScanDialog> {
                         ),
                       ),
                     ),
-                    // Corner accents
                     ..._buildCorners(),
-                    // Processing indicator
                     if (_processing)
                       const ColoredBox(
                         color: Colors.black45,
@@ -1078,7 +1057,6 @@ class _BarcodeScanDialogState extends State<_BarcodeScanDialog> {
                           child: CircularProgressIndicator(color: Colors.white),
                         ),
                       ),
-                    // Error banner
                     if (_lastError != null)
                       Positioned(
                         bottom: 0,

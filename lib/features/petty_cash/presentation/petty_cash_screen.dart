@@ -75,7 +75,6 @@ class PettyCashScreen extends ConsumerWidget {
   }
 }
 
-
 class _FloatCard extends StatelessWidget {
   const _FloatCard({required this.totalIn, required this.totalOut});
   final double totalIn;
@@ -130,9 +129,6 @@ class _Stat extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class _EntryRow extends ConsumerWidget {
   const _EntryRow({required this.entry});
@@ -326,7 +322,6 @@ class _Chip extends StatelessWidget {
   }
 }
 
-
 class _AddEntrySheet extends ConsumerStatefulWidget {
   const _AddEntrySheet();
 
@@ -453,7 +448,6 @@ class _AddEntrySheetState extends ConsumerState<_AddEntrySheet> {
               onChanged: (v) => setState(() => _category = v ?? 'Other'),
             ),
             const SizedBox(height: 12),
-            // Receipt photo
             Row(
               children: [
                 const Text('Receipt:', style: AppTextStyles.bodySmall),

@@ -39,7 +39,6 @@ class SettingsScreen extends ConsumerWidget {
           const _LanguageTile(),
           const SizedBox(height: 24),
 
-          // Products CSV import (admin+)
           if (isAdmin) ...[
             const _SectionHeader(title: 'Products', icon: Icons.inventory_2_outlined),
             _ActionTile(
@@ -224,8 +223,6 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-// Store info tile
-
 class _StoreInfoTile extends ConsumerStatefulWidget {
   const _StoreInfoTile();
 
@@ -341,8 +338,6 @@ class _StoreInfoTileState extends ConsumerState<_StoreInfoTile> {
   }
 }
 
-// Language tile
-
 class _LanguageTile extends ConsumerWidget {
   const _LanguageTile();
 
@@ -372,8 +367,6 @@ class _LanguageTile extends ConsumerWidget {
     );
   }
 }
-
-// Reusable widgets
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title, required this.icon});
@@ -450,8 +443,6 @@ class _ActionTile extends StatelessWidget {
     );
   }
 }
-
-// Audit Log Screen
 
 class _AuditLogScreen extends ConsumerStatefulWidget {
   const _AuditLogScreen();

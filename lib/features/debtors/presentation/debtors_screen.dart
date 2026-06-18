@@ -176,8 +176,6 @@ class _DebtorTile extends StatelessWidget {
   }
 }
 
-// ── Detail + Payment Sheet ──────────────────────────────────────────────────
-
 class _DebtorDetailSheet extends ConsumerWidget {
   const _DebtorDetailSheet({required this.customer});
 
@@ -197,7 +195,6 @@ class _DebtorDetailSheet extends ConsumerWidget {
         controller: scrollController,
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
         children: [
-          // drag handle
           Center(
             child: Container(
               width: 36,
@@ -210,7 +207,6 @@ class _DebtorDetailSheet extends ConsumerWidget {
             ),
           ),
 
-          // Header
           Row(
             children: [
               CircleAvatar(
@@ -239,7 +235,6 @@ class _DebtorDetailSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
-          // Balance card
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -275,7 +270,6 @@ class _DebtorDetailSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
 
-          // Record Payment button
           ElevatedButton.icon(
             icon: const Icon(Icons.payment_rounded),
             label: const Text('Record Payment'),
@@ -295,7 +289,6 @@ class _DebtorDetailSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
 
-          // Payment History
           const Text('Payment History', style: AppTextStyles.titleMedium),
           const SizedBox(height: 8),
           historyAsync.when(
@@ -373,8 +366,6 @@ class _PaymentHistoryRow extends StatelessWidget {
     );
   }
 }
-
-// ── Record Payment Sheet ────────────────────────────────────────────────────
 
 class _RecordPaymentSheet extends ConsumerStatefulWidget {
   const _RecordPaymentSheet({

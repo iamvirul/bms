@@ -46,7 +46,6 @@ class DashboardScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // ── KPI Grid ────────────────────────────────────────────────
               LayoutBuilder(
                 builder: (context, constraints) {
                   final w = constraints.maxWidth;
@@ -94,12 +93,10 @@ class DashboardScreen extends ConsumerWidget {
 
               const SizedBox(height: 20),
 
-              // ── MTD Performance ─────────────────────────────────────────
               _MtdPerformanceCard(s: s),
 
               const SizedBox(height: 28),
 
-              // ── 30-Day Revenue Trend ─────────────────────────────────────
               const _SectionHeader(
                 title: 'Revenue Trend',
                 subtitle: 'Last 30 days - Revenue vs Gross Profit',
@@ -109,7 +106,6 @@ class DashboardScreen extends ConsumerWidget {
 
               const SizedBox(height: 28),
 
-              // ── Weekly Performance ────────────────────────────────────────
               const _SectionHeader(
                 title: 'Weekly Performance',
                 subtitle: 'Last 7 days',
@@ -117,7 +113,6 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               _WeeklyGroupedChart(days: s.last7Days),
 
-              // ── Payment Mix ──────────────────────────────────────────────
               if (s.paymentMix.isNotEmpty) ...[
                 const SizedBox(height: 28),
                 const _SectionHeader(
@@ -128,7 +123,6 @@ class DashboardScreen extends ConsumerWidget {
                 _PaymentMixCard(mix: s.paymentMix),
               ],
 
-              // ── Recent Invoices ──────────────────────────────────────────
               if (s.recentInvoices.isNotEmpty) ...[
                 const SizedBox(height: 28),
                 _SectionHeader(
@@ -148,8 +142,6 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 }
-
-// ── Section Header ───────────────────────────────────────────────────────────
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({
@@ -186,8 +178,6 @@ class _SectionHeader extends StatelessWidget {
         ],
       );
 }
-
-// ── MTD Performance Card ─────────────────────────────────────────────────────
 
 class _MtdPerformanceCard extends StatelessWidget {
   const _MtdPerformanceCard({required this.s});
@@ -332,8 +322,6 @@ class _MtdMetric extends StatelessWidget {
       );
 }
 
-// ── 30-Day Revenue Trend Line Chart ──────────────────────────────────────────
-
 class _RevenueTrendChart extends StatelessWidget {
   const _RevenueTrendChart({required this.trend});
   final List<DailySales> trend;
@@ -382,7 +370,6 @@ class _RevenueTrendChart extends StatelessWidget {
       height: 280,
       child: Column(
         children: [
-          // Legend
           const Row(
             children: [
               _ChartLegendDot(color: AppColors.primary, label: 'Revenue'),
@@ -539,8 +526,6 @@ class _RevenueTrendChart extends StatelessWidget {
   }
 }
 
-// ── Weekly Grouped Bar Chart ─────────────────────────────────────────────────
-
 class _WeeklyGroupedChart extends StatelessWidget {
   const _WeeklyGroupedChart({required this.days});
   final List<DailySales> days;
@@ -690,8 +675,6 @@ class _WeeklyGroupedChart extends StatelessWidget {
   }
 }
 
-// ── Payment Mix Card ─────────────────────────────────────────────────────────
-
 class _PaymentMixCard extends StatelessWidget {
   const _PaymentMixCard({required this.mix});
   final Map<String, double> mix;
@@ -716,7 +699,6 @@ class _PaymentMixCard extends StatelessWidget {
     return _ChartCard(
       child: Row(
         children: [
-          // Donut chart with center label
           SizedBox(
             width: 160,
             height: 180,
@@ -768,7 +750,6 @@ class _PaymentMixCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          // Legend table
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -856,8 +837,6 @@ class _PaymentMixCard extends StatelessWidget {
       };
 }
 
-// ── Recent Invoices List ─────────────────────────────────────────────────────
-
 class _RecentInvoicesList extends StatelessWidget {
   const _RecentInvoicesList({required this.invoices});
   final List<Invoice> invoices;
@@ -942,8 +921,6 @@ class _RecentInvoicesList extends StatelessWidget {
         _ => AppColors.textSecondary,
       };
 }
-
-// ── Shared Helpers ────────────────────────────────────────────────────────────
 
 class _ChartCard extends StatelessWidget {
   const _ChartCard({required this.child, this.height});

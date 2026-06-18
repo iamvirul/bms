@@ -84,8 +84,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   }
 }
 
-// ─── P&L Tab ────────────────────────────────────────────────────────────────
-
 class _PLTab extends ConsumerStatefulWidget {
   const _PLTab();
 
@@ -241,7 +239,6 @@ class _PLChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxY = daily.map((d) => d.revenue).fold<double>(0, (a, b) => a > b ? a : b);
 
-    // Show a label every N days depending on range length
     final labelStep = daily.length <= 10
         ? 1
         : daily.length <= 20
@@ -334,8 +331,6 @@ class _PLChart extends StatelessWidget {
     );
   }
 }
-
-// ─── Stock Valuation Tab ─────────────────────────────────────────────────────
 
 class _StockTab extends ConsumerWidget {
   const _StockTab();
@@ -540,8 +535,6 @@ class _StockValueRow extends StatelessWidget {
   }
 }
 
-// ─── Debtor Aging Tab ────────────────────────────────────────────────────────
-
 class _AgingTab extends ConsumerWidget {
   const _AgingTab();
 
@@ -580,7 +573,6 @@ class _AgingTab extends ConsumerWidget {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Summary card
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -637,7 +629,6 @@ class _AgingTab extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
 
-            // Pie chart + legend
             const Text('Balance by Age', style: AppTextStyles.titleMedium),
             const SizedBox(height: 12),
             _AgingChart(
@@ -653,7 +644,6 @@ class _AgingTab extends ConsumerWidget {
                 colors: _bucketColors),
             const SizedBox(height: 24),
 
-            // Debtor list
             const Text('Customers', style: AppTextStyles.titleMedium),
             const SizedBox(height: 8),
             ...rows.map((r) => _DebtorRow(row: r, colors: _bucketColors, labels: _bucketLabels)),
@@ -797,15 +787,12 @@ class _DebtorRow extends StatelessWidget {
   }
 }
 
-// ─── Shared helpers ──────────────────────────────────────────────────────────
-
 class _SummaryGrid extends StatelessWidget {
   const _SummaryGrid({required this.items});
   final List<({String label, String value, Color color, IconData icon})> items;
 
   @override
   Widget build(BuildContext context) {
-    // Build rows of 2 cards — content-driven height, no aspect ratio distortion
     final rows = <Widget>[];
     for (int i = 0; i < items.length; i += 2) {
       rows.add(Row(
