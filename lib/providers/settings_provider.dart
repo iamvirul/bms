@@ -35,7 +35,7 @@ class StoreInfoNotifier extends Notifier<StoreInfo> {
   }
 
   Future<void> load() async {
-    final s = ref.read(secureStorageProvider);
+    final s = ref.read(sessionStorageProvider);
     state = StoreInfo(
       name: (await s.read(key: _storeNameKey)) ?? 'BMS Store',
       address: (await s.read(key: _storeAddressKey)) ?? '',
@@ -48,7 +48,7 @@ class StoreInfoNotifier extends Notifier<StoreInfo> {
     required String address,
     required String phone,
   }) async {
-    final s = ref.read(secureStorageProvider);
+    final s = ref.read(sessionStorageProvider);
     await Future.wait([
       s.write(key: _storeNameKey, value: name),
       s.write(key: _storeAddressKey, value: address),
@@ -69,13 +69,13 @@ class LanguageNotifier extends Notifier<String> {
   }
 
   Future<void> load() async {
-    final saved = await ref.read(secureStorageProvider).read(key: _langKey);
+    final saved = await ref.read(sessionStorageProvider).read(key: _langKey);
     if (saved != null) state = saved;
   }
 
   Future<void> set(String code) async {
     state = code;
-    await ref.read(secureStorageProvider).write(key: _langKey, value: code);
+    await ref.read(sessionStorageProvider).write(key: _langKey, value: code);
   }
 }
 
@@ -157,7 +157,7 @@ class DbConnectionNotifier extends Notifier<DbConnectionSettings> {
   }
 
   Future<void> load() async {
-    final raw = await ref.read(secureStorageProvider).read(key: _dbConnectionKey);
+    final raw = await ref.read(sessionStorageProvider).read(key: _dbConnectionKey);
     if (raw != null) {
       try {
         state = DbConnectionSettings.fromJson(jsonDecode(raw) as Map<String, dynamic>);
@@ -169,7 +169,7 @@ class DbConnectionNotifier extends Notifier<DbConnectionSettings> {
 
   Future<void> save(DbConnectionSettings settings) async {
     state = settings;
-    await ref.read(secureStorageProvider).write(
+    await ref.read(sessionStorageProvider).write(
           key: _dbConnectionKey,
           value: jsonEncode(settings.toJson()),
         );

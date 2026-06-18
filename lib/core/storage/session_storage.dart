@@ -8,16 +8,17 @@ class SessionStorage {
 
   final FlutterSecureStorage _secure;
 
-  static String? _webSession;
+  // Keyed map so multiple providers can each store their own key on web.
+  static final Map<String, String> _webStore = {};
 
   Future<String?> read({required String key}) async {
-    if (kIsWeb) return _webSession;
+    if (kIsWeb) return _webStore[key];
     return _secure.read(key: key);
   }
 
   Future<void> write({required String key, required String value}) async {
     if (kIsWeb) {
-      _webSession = value;
+      _webStore[key] = value;
       return;
     }
     await _secure.write(key: key, value: value);
@@ -25,7 +26,7 @@ class SessionStorage {
 
   Future<void> delete({required String key}) async {
     if (kIsWeb) {
-      _webSession = null;
+      _webStore.remove(key);
       return;
     }
     await _secure.delete(key: key);
