@@ -1156,11 +1156,6 @@ class AppLocalizationsSi extends AppLocalizations {
   String get sqliteConnOk => 'SQLite ක්‍රියාත්මකයි - සම්බන්ධය හරි';
 
   @override
-  String mysqlSyncPlanned(String host, String port) {
-    return 'MySQL සමමුහුර්ත කිරීම ඉදිරි නිකාසයකදී. සැකසීම් $host:$port සඳහා සුරකිණ.';
-  }
-
-  @override
   String get downloadNotSupportedWeb =>
       'වෙබ් පෙරදර්ශනයේ බාගත කිරීම සහාය නොකෙරේ';
 

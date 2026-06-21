@@ -1158,11 +1158,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sqliteConnOk => 'SQLite is the active database - connection OK';
 
   @override
-  String mysqlSyncPlanned(String host, String port) {
-    return 'MySQL sync is planned for a future release. Settings saved for $host:$port.';
-  }
-
-  @override
   String get downloadNotSupportedWeb => 'Download not supported in web preview';
 
   @override

@@ -2338,12 +2338,6 @@ abstract class AppLocalizations {
   /// **'SQLite is the active database - connection OK'**
   String get sqliteConnOk;
 
-  /// No description provided for @mysqlSyncPlanned.
-  ///
-  /// In en, this message translates to:
-  /// **'MySQL sync is planned for a future release. Settings saved for {host}:{port}.'**
-  String mysqlSyncPlanned(String host, String port);
-
   /// No description provided for @downloadNotSupportedWeb.
   ///
   /// In en, this message translates to:

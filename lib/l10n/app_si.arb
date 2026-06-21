@@ -394,7 +394,6 @@
   "dbUsername": "පරිශීලක නාමය",
   "dbPassword": "මුරපදය",
   "sqliteConnOk": "SQLite ක්‍රියාත්මකයි - සම්බන්ධය හරි",
-  "mysqlSyncPlanned": "MySQL සමමුහුර්ත කිරීම ඉදිරි නිකාසයකදී. සැකසීම් {host}:{port} සඳහා සුරකිණ.",
   "downloadNotSupportedWeb": "වෙබ් පෙරදර්ශනයේ බාගත කිරීම සහාය නොකෙරේ",
   "fileSaved": "සුරකිණ: {path}",
   "exportFailed": "ගොනු කිරීම අසාර්ථකයි. නැවත උත්සාහ කරන්න.",
