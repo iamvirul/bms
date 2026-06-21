@@ -27,11 +27,14 @@ class LicenseService {
       return LicenseState.unlicensed;
     }
 
-    final exp = DateTime.fromMillisecondsSinceEpoch(
-        (payload['exp'] as int) * 1000,
-        isUtc: true);
+    final expSeconds = payload['exp'];
+    if (expSeconds is! int) {
+      await clear();
+      return LicenseState.unlicensed;
+    }
+    final exp = DateTime.fromMillisecondsSinceEpoch(expSeconds * 1000, isUtc: true);
 
-    final tier = _parseTier(payload['tier'] as String? ?? 'free');
+    final tier     = _parseTier(payload['tier'] as String? ?? 'free');
     final features = _parseFeatures(payload['features']);
 
     if (exp.isAfter(DateTime.now().toUtc())) {
@@ -46,7 +49,13 @@ class LicenseService {
     // JWT expired — check offline grace period.
     final lastStr = await _storage.read(key: kLicLastValidated);
     if (lastStr != null) {
-      final last = DateTime.parse(lastStr);
+      DateTime last;
+      try {
+        last = DateTime.parse(lastStr);
+      } catch (_) {
+        await clear();
+        return LicenseState.unlicensed;
+      }
       final elapsed = DateTime.now().toUtc().difference(last);
       if (elapsed < kJwtGracePeriod) {
         return LicenseState(
@@ -126,16 +135,14 @@ class LicenseService {
         return loadCachedState();
       }
 
-      // Server rejected the token — treat as expired.
-      final code = (body['error'] as Map<String, dynamic>?)?['code'] as String?;
-      if (code == 'LICENSE_REVOKED' ||
-          code == 'LICENSE_EXPIRED' ||
-          code == 'TRIAL_EXPIRED') {
+      // Any 4xx means the server explicitly rejected the token — clear state.
+      // Only preserve cached state for 5xx (server error) or network failure.
+      if (resp.statusCode >= 400 && resp.statusCode < 500) {
         await clear();
         return LicenseState.unlicensed;
       }
     } catch (_) {
-      // Network unavailable — fall through to cached state.
+      // Network unavailable — fall through to cached grace-period state.
     }
 
     return loadCachedState();

@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:bms/licensing/device_id.dart';
 import 'package:bms/licensing/license_constants.dart';
 import 'package:bms/licensing/license_model.dart';
 import 'package:bms/licensing/license_service.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:uuid/uuid.dart';
 
 // ---------------------------------------------------------------------------
 // Service provider
@@ -21,7 +25,15 @@ final deviceIdProvider = FutureProvider<String>((ref) async {
   const storage = FlutterSecureStorage();
   final cached = await storage.read(key: kLicDeviceId);
   if (cached != null) return cached;
-  final id = await computeDeviceId();
+
+  String id;
+  try {
+    id = await computeDeviceId();
+  } catch (_) {
+    // Unsupported platform or fingerprinting failure — generate a one-time
+    // random ID stored locally so the same install always gets the same value.
+    id = sha256.convert(utf8.encode(const Uuid().v4())).toString();
+  }
   await storage.write(key: kLicDeviceId, value: id);
   return id;
 });
@@ -33,11 +45,10 @@ final deviceIdProvider = FutureProvider<String>((ref) async {
 class LicenseNotifier extends AsyncNotifier<LicenseState> {
   @override
   Future<LicenseState> build() async {
-    final service  = ref.watch(licenseServiceProvider);
-    final cached   = await service.loadCachedState();
+    final service = ref.watch(licenseServiceProvider);
+    final cached  = await service.loadCachedState();
 
-    // If we have a usable cached state, try to refresh in the background
-    // so the app starts instantly and validates silently.
+    // Start instantly from cache then silently refresh in the background.
     if (cached.isUsable) {
       _refreshInBackground(service);
       return cached;
@@ -52,17 +63,16 @@ class LicenseNotifier extends AsyncNotifier<LicenseState> {
         final jwt = await service.readStoredJwt();
         if (jwt == null) return;
         final deviceId = await ref.read(deviceIdProvider.future);
-        final fresh = await service.validateOnline(jwt, deviceId);
+        final fresh    = await service.validateOnline(jwt, deviceId);
         state = AsyncData(fresh);
       } catch (_) {
-        // Swallow — background refresh failure is non-fatal.
+        // Non-fatal — offline or transient failure; cached state remains.
       }
     });
   }
 
-  // Called from ActivationScreen after the user enters a key.
-  // Throws LicenseException (or generic Exception) on failure so the screen
-  // can display the error — does NOT store an AsyncError in state.
+  // Called from ActivationScreen. Throws on failure so the screen can show
+  // the error — never stores AsyncError in state.
   Future<void> activate(String key) async {
     state = const AsyncLoading();
     try {
@@ -76,27 +86,32 @@ class LicenseNotifier extends AsyncNotifier<LicenseState> {
     }
   }
 
-  // Called from the settings screen to release this device slot.
+  // Called from settings to release this device slot.
+  // Always clears local state regardless of network/device-ID failures.
   Future<void> deactivate() async {
-    final service = ref.read(licenseServiceProvider);
-    final jwt     = await service.readStoredJwt();
-    if (jwt == null) return;
-    final deviceId = await ref.read(deviceIdProvider.future);
-    await service.deactivate(jwt, deviceId);
+    try {
+      final service  = ref.read(licenseServiceProvider);
+      final jwt      = await service.readStoredJwt();
+      if (jwt != null) {
+        final deviceId = await ref.read(deviceIdProvider.future);
+        await service.deactivate(jwt, deviceId);
+      }
+    } catch (_) {
+      // Best-effort server call; local clear happens unconditionally below.
+    }
     state = const AsyncData(LicenseState.unlicensed);
   }
 
-  // Force an online re-validation (e.g. pull-to-refresh on settings).
+  // Force an online re-validation (e.g. settings pull-to-refresh).
   Future<void> revalidate() async {
-    final service  = ref.read(licenseServiceProvider);
-    final jwt      = await service.readStoredJwt();
-    if (jwt == null) {
-      state = const AsyncData(LicenseState.unlicensed);
-      return;
-    }
-    final deviceId = await ref.read(deviceIdProvider.future);
-    final fresh    = await service.validateOnline(jwt, deviceId);
-    state = AsyncData(fresh);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final service  = ref.read(licenseServiceProvider);
+      final jwt      = await service.readStoredJwt();
+      if (jwt == null) return LicenseState.unlicensed;
+      final deviceId = await ref.read(deviceIdProvider.future);
+      return service.validateOnline(jwt, deviceId);
+    });
   }
 }
 
@@ -118,6 +133,5 @@ final licenseTierProvider = Provider<LicenseTier>((ref) {
 
 final licenseStatusProvider = Provider<LicenseStatus>((ref) {
   if (ref.watch(licenseProvider).isLoading) return LicenseStatus.checking;
-  return ref.watch(licenseProvider).value?.status ??
-      LicenseStatus.unlicensed;
+  return ref.watch(licenseProvider).value?.status ?? LicenseStatus.unlicensed;
 });
