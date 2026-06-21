@@ -33,9 +33,10 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
       await ref.read(licenseProvider.notifier).activate(_controller.text);
     } on LicenseException catch (e) {
       setState(() => _serverError = e.message);
-    } catch (_) {
-      setState(() => _serverError =
-          'Could not connect to the licensing server. Check your internet connection.');
+    } catch (e) {
+      setState(() => _serverError = e is LicenseException
+          ? e.message
+          : 'Could not connect to the licensing server. Check your internet connection.');
     }
   }
 

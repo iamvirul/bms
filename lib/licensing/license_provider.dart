@@ -34,7 +34,12 @@ final deviceIdProvider = FutureProvider<String>((ref) async {
     // random ID stored locally so the same install always gets the same value.
     id = sha256.convert(utf8.encode(const Uuid().v4())).toString();
   }
-  await storage.write(key: kLicDeviceId, value: id);
+  try {
+    await storage.write(key: kLicDeviceId, value: id);
+  } catch (_) {
+    // Storage unavailable (e.g. web IndexedDB restrictions) — return in-memory
+    // value; will recompute next session but won't block activation.
+  }
   return id;
 });
 

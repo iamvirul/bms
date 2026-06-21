@@ -100,7 +100,12 @@ class LicenseService {
 
     final data = body['data'] as Map<String, dynamic>;
     final jwt  = data['token'] as String;
-    await _persist(jwt);
+    try {
+      await _persist(jwt);
+    } catch (_) {
+      // Storage write failed (e.g. web IndexedDB). Session will work in-memory;
+      // user will need to re-activate after closing the tab.
+    }
 
     final tier     = _parseTier(data['tier'] as String? ?? 'free');
     final features = _parseFeatures(data['features']);
@@ -178,12 +183,11 @@ class LicenseService {
   Future<String?> readStoredJwt() => _storage.read(key: kLicJwt);
 
   Future<void> _persist(String jwt) async {
-    await Future.wait([
-      _storage.write(key: kLicJwt, value: jwt),
-      _storage.write(
-          key: kLicLastValidated,
-          value: DateTime.now().toUtc().toIso8601String()),
-    ]);
+    // Sequential writes to avoid concurrent IndexedDB transaction issues on web.
+    await _storage.write(key: kLicJwt, value: jwt);
+    await _storage.write(
+        key: kLicLastValidated,
+        value: DateTime.now().toUtc().toIso8601String());
   }
 
   static Map<String, dynamic>? _decodePayload(String jwt) {
