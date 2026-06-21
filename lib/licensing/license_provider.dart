@@ -23,7 +23,10 @@ final licenseServiceProvider = Provider<LicenseService>(
 
 final deviceIdProvider = FutureProvider<String>((ref) async {
   const storage = FlutterSecureStorage();
-  final cached = await storage.read(key: kLicDeviceId);
+  String? cached;
+  try {
+    cached = await storage.read(key: kLicDeviceId);
+  } catch (_) {}
   if (cached != null) return cached;
 
   String id;

@@ -15,10 +15,36 @@ class LicenseService {
   final FlutterSecureStorage _storage;
   final http.Client _client;
 
-  // Reads the persisted JWT and determines the current license state without
-  // making any network call. Returns LicenseState.unlicensed if nothing is stored.
+  // -------------------------------------------------------------------------
+  // Safe storage wrappers — flutter_secure_storage can throw on web
+  // (WasmStorageImplementation / IndexedDB failures). Never let storage
+  // errors propagate to the caller; treat them as "nothing stored".
+  // -------------------------------------------------------------------------
+
+  Future<String?> _read(String key) async {
+    try {
+      return await _storage.read(key: key);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _write(String key, String value) async {
+    try {
+      await _storage.write(key: key, value: value);
+    } catch (_) {}
+  }
+
+  Future<void> _delete(String key) async {
+    try {
+      await _storage.delete(key: key);
+    } catch (_) {}
+  }
+
+  // -------------------------------------------------------------------------
+
   Future<LicenseState> loadCachedState() async {
-    final jwt = await _storage.read(key: kLicJwt);
+    final jwt = await _read(kLicJwt);
     if (jwt == null) return LicenseState.unlicensed;
 
     final payload = _decodePayload(jwt);
@@ -32,7 +58,8 @@ class LicenseService {
       await clear();
       return LicenseState.unlicensed;
     }
-    final exp = DateTime.fromMillisecondsSinceEpoch(expSeconds * 1000, isUtc: true);
+    final exp =
+        DateTime.fromMillisecondsSinceEpoch(expSeconds * 1000, isUtc: true);
 
     final tier     = _parseTier(payload['tier'] as String? ?? 'free');
     final features = _parseFeatures(payload['features']);
@@ -47,7 +74,7 @@ class LicenseService {
     }
 
     // JWT expired — check offline grace period.
-    final lastStr = await _storage.read(key: kLicLastValidated);
+    final lastStr = await _read(kLicLastValidated);
     if (lastStr != null) {
       DateTime last;
       try {
@@ -76,7 +103,6 @@ class LicenseService {
     );
   }
 
-  // Activates with the given key and persists the resulting JWT.
   Future<LicenseState> activate(String key, String deviceId) async {
     final resp = await _client
         .post(
@@ -93,19 +119,16 @@ class LicenseService {
 
     if (resp.statusCode != 200 && resp.statusCode != 201) {
       final msg = (body['error'] as Map<String, dynamic>?)?['message']
-          as String? ?? 'Activation failed';
-      final code = (body['error'] as Map<String, dynamic>?)?['code'] as String?;
+              as String? ??
+          'Activation failed';
+      final code =
+          (body['error'] as Map<String, dynamic>?)?['code'] as String?;
       throw LicenseException(msg, code);
     }
 
     final data = body['data'] as Map<String, dynamic>;
     final jwt  = data['token'] as String;
-    try {
-      await _persist(jwt);
-    } catch (_) {
-      // Storage write failed (e.g. web IndexedDB). Session will work in-memory;
-      // user will need to re-activate after closing the tab.
-    }
+    await _persist(jwt);
 
     final tier     = _parseTier(data['tier'] as String? ?? 'free');
     final features = _parseFeatures(data['features']);
@@ -116,8 +139,6 @@ class LicenseService {
     );
   }
 
-  // Validates the stored JWT against the server and refreshes it.
-  // On network failure, falls through to the cached grace-period state.
   Future<LicenseState> validateOnline(String jwt, String deviceId) async {
     try {
       final resp = await _client
@@ -134,26 +155,25 @@ class LicenseService {
       final body = jsonDecode(resp.body) as Map<String, dynamic>;
 
       if (resp.statusCode == 200) {
-        final data    = body['data'] as Map<String, dynamic>;
-        final newJwt  = data['token'] as String;
+        final data   = body['data'] as Map<String, dynamic>;
+        final newJwt = data['token'] as String;
         await _persist(newJwt);
         return loadCachedState();
       }
 
-      // Any 4xx means the server explicitly rejected the token — clear state.
-      // Only preserve cached state for 5xx (server error) or network failure.
+      // Any 4xx = server explicitly rejected — clear local state.
+      // 5xx / network failure falls through to cached grace-period state.
       if (resp.statusCode >= 400 && resp.statusCode < 500) {
         await clear();
         return LicenseState.unlicensed;
       }
     } catch (_) {
-      // Network unavailable — fall through to cached grace-period state.
+      // Network unavailable — fall through to cached state.
     }
 
     return loadCachedState();
   }
 
-  // Deactivates this device slot on the server.
   Future<void> deactivate(String jwt, String deviceId) async {
     try {
       await _client
@@ -173,28 +193,24 @@ class LicenseService {
   }
 
   Future<void> clear() async {
-    await Future.wait([
-      _storage.delete(key: kLicJwt),
-      _storage.delete(key: kLicLastValidated),
-      _storage.delete(key: kLicDeviceId),
-    ]);
+    await _delete(kLicJwt);
+    await _delete(kLicLastValidated);
+    await _delete(kLicDeviceId);
   }
 
-  Future<String?> readStoredJwt() => _storage.read(key: kLicJwt);
+  Future<String?> readStoredJwt() => _read(kLicJwt);
 
   Future<void> _persist(String jwt) async {
-    // Sequential writes to avoid concurrent IndexedDB transaction issues on web.
-    await _storage.write(key: kLicJwt, value: jwt);
-    await _storage.write(
-        key: kLicLastValidated,
-        value: DateTime.now().toUtc().toIso8601String());
+    // Sequential to avoid concurrent IndexedDB transaction conflicts on web.
+    await _write(kLicJwt, jwt);
+    await _write(kLicLastValidated, DateTime.now().toUtc().toIso8601String());
   }
 
   static Map<String, dynamic>? _decodePayload(String jwt) {
     try {
       final parts = jwt.split('.');
       if (parts.length != 3) return null;
-      final padded = base64Url.normalize(parts[1]);
+      final padded  = base64Url.normalize(parts[1]);
       final decoded = utf8.decode(base64Url.decode(padded));
       return jsonDecode(decoded) as Map<String, dynamic>;
     } catch (_) {
