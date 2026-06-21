@@ -84,6 +84,9 @@ class SyncNotifier extends Notifier<SyncState> {
     final settings = ref.read(dbConnectionSettingsProvider);
     if (settings.isLocalSqlite) return;
 
+    // Prevent overlapping sync executions
+    if (state.status == SyncStatus.syncing) return;
+
     state = state.copyWith(status: SyncStatus.syncing);
 
     try {
@@ -98,8 +101,6 @@ class SyncNotifier extends Notifier<SyncState> {
       );
 
       final now = DateTime.now().toUtc();
-      await _saveTimestamp(_kLastPushKey, now);
-      await _saveTimestamp(_kLastPullKey, now);
 
       if (result.hasErrors) {
         state = state.copyWith(
@@ -110,6 +111,8 @@ class SyncNotifier extends Notifier<SyncState> {
           lastPulled: result.pulled,
         );
       } else {
+        await _saveTimestamp(_kLastPushKey, now);
+        await _saveTimestamp(_kLastPullKey, now);
         state = SyncState(
           status: SyncStatus.success,
           lastSyncAt: now,

@@ -53,25 +53,25 @@ void main() {
 
     group('isToday', () {
       test('returns true for DateTime.now()', () {
-        expect(BmsDateUtils.isToday(DateTime.now()), isTrue);
+        final now = DateTime.now();
+        expect(BmsDateUtils.isToday(now), isTrue);
       });
 
       test('returns false for yesterday', () {
-        final yesterday = DateTime.now().subtract(const Duration(days: 1));
+        final now = DateTime.now();
+        final yesterday = now.subtract(const Duration(days: 1));
         expect(BmsDateUtils.isToday(yesterday), isFalse);
       });
 
       test('returns false for tomorrow', () {
-        final tomorrow = DateTime.now().add(const Duration(days: 1));
+        final now = DateTime.now();
+        final tomorrow = now.add(const Duration(days: 1));
         expect(BmsDateUtils.isToday(tomorrow), isFalse);
       });
 
       test('ignores time component', () {
-        final todayMidnight = DateTime(
-          DateTime.now().year,
-          DateTime.now().month,
-          DateTime.now().day,
-        );
+        final now = DateTime.now();
+        final todayMidnight = DateTime(now.year, now.month, now.day);
         expect(BmsDateUtils.isToday(todayMidnight), isTrue);
       });
     });
@@ -105,22 +105,26 @@ void main() {
 
     group('agingBucket', () {
       test('returns 0-30 days for recent invoice', () {
-        final recent = DateTime.now().subtract(const Duration(days: 10));
+        final now = DateTime.now();
+        final recent = now.subtract(const Duration(days: 10));
         expect(BmsDateUtils.agingBucket(recent), '0-30 days');
       });
 
       test('returns 31-60 days for 45-day-old invoice', () {
-        final old = DateTime.now().subtract(const Duration(days: 45));
+        final now = DateTime.now();
+        final old = now.subtract(const Duration(days: 45));
         expect(BmsDateUtils.agingBucket(old), '31-60 days');
       });
 
       test('returns 60+ days for 90-day-old invoice', () {
-        final veryOld = DateTime.now().subtract(const Duration(days: 90));
+        final now = DateTime.now();
+        final veryOld = now.subtract(const Duration(days: 90));
         expect(BmsDateUtils.agingBucket(veryOld), '60+ days');
       });
 
       test('returns 0-30 days for exactly 30 days', () {
-        final exactly = DateTime.now().subtract(const Duration(days: 30));
+        final now = DateTime.now();
+        final exactly = now.subtract(const Duration(days: 30));
         expect(BmsDateUtils.agingBucket(exactly), '0-30 days');
       });
     });

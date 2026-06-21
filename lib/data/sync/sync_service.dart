@@ -129,14 +129,17 @@ class SyncService {
 
     final String whereClause;
     final List<Variable> variables;
-    if (hasUpdatedAt) {
+    if (hasUpdatedAt && hasCreatedAt) {
       whereClause = 'WHERE "updated_at" > ? OR "created_at" > ?';
       variables   = [Variable.withInt(sinceMs), Variable.withInt(sinceMs)];
+    } else if (hasUpdatedAt) {
+      whereClause = 'WHERE "updated_at" > ?';
+      variables   = [Variable.withInt(sinceMs)];
     } else if (hasCreatedAt) {
       whereClause = 'WHERE "created_at" > ?';
       variables   = [Variable.withInt(sinceMs)];
     } else {
-      // No timestamp column — full push every cycle (small reference tables).
+      // No timestamp column - full push every cycle (small reference tables).
       whereClause = '';
       variables   = [];
     }
@@ -190,8 +193,11 @@ class SyncService {
       whereClause = 'WHERE `updated_at` > :since';
       params      = {'since': sinceMs};
     } else {
-      // No timestamp — skip pull for push-only tables.
-      return 0;
+      // No timestamp - skip pull only for push-only tables.
+      if (table.pushOnly) return 0;
+      // For non-pushOnly tables without updated_at, pull all rows.
+      whereClause = '';
+      params      = {};
     }
 
     final result = await conn.execute(
@@ -203,10 +209,16 @@ class SyncService {
     if (result.numOfRows == 0) return 0;
 
     final placeholders = colNames.map((_) => '?').join(', ');
-    final upsertSql    =
-        'INSERT OR REPLACE INTO "${table.sqliteName}" '
+    final pkName = table.pk.name;
+    final updateSet = colNames
+        .where((c) => c != pkName)
+        .map((c) => '"$c" = excluded."$c"')
+        .join(', ');
+    final upsertSql =
+        'INSERT INTO "${table.sqliteName}" '
         '(${colNames.map((c) => '"$c"').join(', ')}) '
-        'VALUES ($placeholders)';
+        'VALUES ($placeholders) '
+        'ON CONFLICT("$pkName") DO UPDATE SET $updateSet';
 
     int count = 0;
     for (final row in result.rows) {

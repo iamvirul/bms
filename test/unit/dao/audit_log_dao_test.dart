@@ -81,8 +81,12 @@ void main() {
 
       test('returns all entries when no filter', () async {
         final entries = await db.auditLogDao.getAll();
-        // +1 for the developer seed entry created during DB migration
-        expect(entries.length, 6);
+        // Verify all entries inserted in setUp are present
+        expect(entries.any((e) => e.id == 'al1'), isTrue);
+        expect(entries.any((e) => e.id == 'al2'), isTrue);
+        expect(entries.any((e) => e.id == 'al3'), isTrue);
+        expect(entries.any((e) => e.id == 'al4'), isTrue);
+        expect(entries.any((e) => e.id == 'al5'), isTrue);
       });
 
       test('filters by entityType when provided', () async {

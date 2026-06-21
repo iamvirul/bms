@@ -16,11 +16,12 @@ void main() {
     String status = 'open',
     double total = 100,
     DateTime? createdAt,
+    String userId = 'u1',
   }) =>
       db.invoicesDao.insertInvoice(InvoicesCompanion.insert(
         id: id,
         invoiceNo: no,
-        userId: 'u1',
+        userId: userId,
         total: Value(total),
         status: Value(status),
         createdAt: createdAt != null ? Value(createdAt) : const Value.absent(),

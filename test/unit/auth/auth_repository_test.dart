@@ -50,7 +50,7 @@ void main() {
     storage = MockSessionStorage();
     repo = AuthRepository(usersDao: dao, sessionStorage: storage);
 
-    // Default stubs — individual tests override as needed.
+    // Default stubs - individual tests override as needed.
     when(() => dao.incrementFailedAttempts(any())).thenAnswer((_) async {});
     when(() => dao.lockAccount(any(), any())).thenAnswer((_) async {});
     when(() => dao.resetFailedAttempts(any())).thenAnswer((_) async {});

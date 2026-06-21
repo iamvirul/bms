@@ -455,5 +455,13 @@
   "totalRevenue": "මුළු ආදායම",
 
   "invalidNumber": "වලංගු නොවන සංඛ්‍යාව",
-  "connectionSettingsSaved": "සම්බන්ධතා සැකසීම් සුරකිනා ලදී"
+  "connectionSettingsSaved": "සම්බන්ධතා සැකසීම් සුරකිනා ලදී",
+  "syncConnectedSuccessfully": "සාර්ථකව සම්බන්ධ විය",
+  "syncConnectionFailed": "සම්බන්ධතාව අසාර්ථක විය: {error}",
+  "syncSyncing": "සමමුහූර්ත කරමින්...",
+  "syncSynced": "සමමුහූර්ත කරන ලදී",
+  "syncWaitingForFirstSync": "පළමු සමමුහූර්තය සඳහා බලා සිටිමින්",
+  "syncDisabled": "සමමුහූර්තය අබල කර ඇත",
+  "syncLastSync": "අවසන් සමමුහූර්තය: {time}",
+  "syncNow": "දැන් සමමුහූර්ත කරන්න"
 }

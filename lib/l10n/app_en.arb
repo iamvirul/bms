@@ -471,5 +471,15 @@
   "totalRevenue": "total revenue",
 
   "invalidNumber": "Invalid number",
-  "connectionSettingsSaved": "Connection settings saved"
+  "connectionSettingsSaved": "Connection settings saved",
+  "syncConnectedSuccessfully": "Connected successfully",
+  "syncConnectionFailed": "Connection failed: {error}",
+  "@syncConnectionFailed": { "placeholders": { "error": { "type": "String" } } },
+  "syncSyncing": "Syncing...",
+  "syncSynced": "Synced",
+  "syncWaitingForFirstSync": "Waiting for first sync",
+  "syncDisabled": "Sync disabled",
+  "syncLastSync": "Last sync: {time}",
+  "@syncLastSync": { "placeholders": { "time": { "type": "String" } } },
+  "syncNow": "Sync Now"
 }

@@ -24,8 +24,8 @@ class SyncColumn {
     if (raw == null) return null;
     return switch (type) {
       SyncColumnType.text    => raw,
-      SyncColumnType.integer => int.tryParse(raw),
-      SyncColumnType.real    => double.tryParse(raw),
+      SyncColumnType.integer => int.parse(raw),
+      SyncColumnType.real    => double.parse(raw),
     };
   }
 }

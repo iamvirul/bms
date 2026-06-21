@@ -453,7 +453,7 @@ class _DbConnectionTileState extends ConsumerState<_DbConnectionTile> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(error == null ? 'Connected successfully' : 'Connection failed: $error'),
+        content: Text(error == null ? context.l10n.syncConnectedSuccessfully : context.l10n.syncConnectionFailed(error)),
         backgroundColor: error == null ? AppColors.success : AppColors.error,
       ),
     );
@@ -615,15 +615,15 @@ class _SyncStatusBar extends ConsumerWidget {
     final lastSync  = syncState.lastSyncAt;
 
     final (icon, color, label) = switch (status) {
-      SyncStatus.syncing  => (Icons.sync_rounded, AppColors.primary, 'Syncing...'),
-      SyncStatus.success  => (Icons.cloud_done_outlined, AppColors.success, 'Synced'),
+      SyncStatus.syncing  => (Icons.sync_rounded, AppColors.primary, context.l10n.syncSyncing),
+      SyncStatus.success  => (Icons.cloud_done_outlined, AppColors.success, context.l10n.syncSynced),
       SyncStatus.error    => (Icons.cloud_off_outlined, AppColors.error, syncState.lastError ?? 'Sync error'),
-      SyncStatus.idle     => (Icons.cloud_sync_outlined, AppColors.textSecondary, 'Waiting for first sync'),
-      SyncStatus.disabled => (Icons.cloud_off_outlined, AppColors.textDisabled, 'Sync disabled'),
+      SyncStatus.idle     => (Icons.cloud_sync_outlined, AppColors.textSecondary, context.l10n.syncWaitingForFirstSync),
+      SyncStatus.disabled => (Icons.cloud_off_outlined, AppColors.textDisabled, context.l10n.syncDisabled),
     };
 
     final lastSyncText = lastSync != null
-        ? 'Last sync: ${DateFormat('MMM d, HH:mm').format(lastSync.toLocal())}'
+        ? context.l10n.syncLastSync(DateFormat('MMM d, HH:mm').format(lastSync.toLocal()))
         : null;
 
     return Row(
@@ -651,7 +651,7 @@ class _SyncStatusBar extends ConsumerWidget {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.sync_rounded, size: 16),
-          label: const Text('Sync Now'),
+          label: Text(context.l10n.syncNow),
           onPressed: status == SyncStatus.syncing ? null : onSyncNow,
         ),
       ],

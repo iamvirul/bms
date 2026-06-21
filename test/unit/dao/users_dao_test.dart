@@ -88,7 +88,7 @@ void main() {
       final until = DateTime(2030, 1, 1);
       await db.usersDao.lockAccount('u1', until);
       final result = await db.usersDao.findById('u1');
-      expect(result?.lockedUntil, isNotNull);
+      expect(result?.lockedUntil, equals(until));
     });
 
     test('setActive(false) disables user', () async {

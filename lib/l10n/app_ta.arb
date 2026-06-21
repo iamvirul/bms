@@ -455,5 +455,13 @@
   "totalRevenue": "மொத்த வருவாய்",
 
   "invalidNumber": "தவறான எண்",
-  "connectionSettingsSaved": "இணைப்பு அமைப்புகள் சேமிக்கப்பட்டன"
+  "connectionSettingsSaved": "இணைப்பு அமைப்புகள் சேமிக்கப்பட்டன",
+  "syncConnectedSuccessfully": "வெற்றிகரமாக இணைக்கப்பட்டது",
+  "syncConnectionFailed": "இணைப்பு தோல்வியடைந்தது: {error}",
+  "syncSyncing": "ஒத்திசைக்கிறது...",
+  "syncSynced": "ஒத்திசைக்கப்பட்டது",
+  "syncWaitingForFirstSync": "முதல் ஒத்திசைவுக்காக காத்திருக்கிறது",
+  "syncDisabled": "ஒத்திசைவு முடக்கப்பட்டது",
+  "syncLastSync": "கடைசி ஒத்திசைவு: {time}",
+  "syncNow": "இப்போது ஒத்திசை"
 }
