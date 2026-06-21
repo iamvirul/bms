@@ -1,5 +1,7 @@
 import 'package:bms/core/router/route_guard.dart';
 import 'package:bms/features/auth/presentation/login_screen.dart';
+import 'package:bms/licensing/activation_screen.dart';
+import 'package:bms/licensing/license_provider.dart';
 import 'package:bms/features/cheques/presentation/cheque_screen.dart';
 import 'package:bms/features/customers/presentation/customers_screen.dart';
 import 'package:bms/features/dashboard/presentation/dashboard_screen.dart';
@@ -31,16 +33,29 @@ GoRouter appRouter(Ref ref) {
   final notifier = _RouterNotifier();
 
   ref.listen(currentAuthStateProvider, (_, _) => notifier.notify());
+  ref.listen(licenseProvider, (_, _) => notifier.notify());
   ref.onDispose(notifier.dispose);
 
   return GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.splash,
     refreshListenable: notifier,
     redirect: (context, state) => RouteGuard.redirect(
       state: state,
       authState: ref.read(currentAuthStateProvider),
+      license: ref.read(licenseProvider),
     ),
     routes: [
+      GoRoute(
+        path: AppRoutes.splash,
+        name: 'splash',
+        pageBuilder: (context, state) => _fadePage(state, const _SplashPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.activate,
+        name: 'activate',
+        pageBuilder: (context, state) =>
+            _fadePage(state, const ActivationScreen()),
+      ),
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
@@ -146,7 +161,23 @@ CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) =>
       },
     );
 
+class _SplashPage extends StatelessWidget {
+  const _SplashPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Color(0xFF0F172A),
+      body: Center(
+        child: CircularProgressIndicator(color: Color(0xFF2563EB)),
+      ),
+    );
+  }
+}
+
 abstract final class AppRoutes {
+  static const String splash   = '/';
+  static const String activate = '/activate';
   static const String login = '/login';
   static const String dashboard = '/dashboard';
   static const String pos = '/pos';
