@@ -5,6 +5,7 @@ import 'package:bms/licensing/license_constants.dart';
 import 'package:bms/licensing/license_model.dart';
 import 'package:bms/licensing/license_service.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
@@ -50,9 +51,22 @@ final deviceIdProvider = FutureProvider<String>((ref) async {
 // License state notifier
 // ---------------------------------------------------------------------------
 
+// Full enterprise access granted unconditionally on web (preview/demo builds).
+// Licensing is enforced on desktop (Windows, macOS, Linux) only.
+const _webGrantedState = LicenseState(
+  status: LicenseStatus.active,
+  tier: LicenseTier.enterprise,
+  features: {
+    'pos', 'inventory', 'customers', 'reports', 'grn', 'cheques',
+    'petty_cash', 'debtors', 'users', 'api_access', 'multi_branch',
+  },
+);
+
 class LicenseNotifier extends AsyncNotifier<LicenseState> {
   @override
   Future<LicenseState> build() async {
+    if (kIsWeb) return _webGrantedState;
+
     final service = ref.watch(licenseServiceProvider);
     final cached  = await service.loadCachedState();
 
@@ -79,9 +93,8 @@ class LicenseNotifier extends AsyncNotifier<LicenseState> {
     });
   }
 
-  // Called from ActivationScreen. Throws on failure so the screen can show
-  // the error — never stores AsyncError in state.
   Future<void> activate(String key) async {
+    if (kIsWeb) return;
     state = const AsyncLoading();
     try {
       final service  = ref.read(licenseServiceProvider);
@@ -94,9 +107,8 @@ class LicenseNotifier extends AsyncNotifier<LicenseState> {
     }
   }
 
-  // Called from settings to release this device slot.
-  // Always clears local state regardless of network/device-ID failures.
   Future<void> deactivate() async {
+    if (kIsWeb) return;
     try {
       final service  = ref.read(licenseServiceProvider);
       final jwt      = await service.readStoredJwt();
@@ -104,14 +116,12 @@ class LicenseNotifier extends AsyncNotifier<LicenseState> {
         final deviceId = await ref.read(deviceIdProvider.future);
         await service.deactivate(jwt, deviceId);
       }
-    } catch (_) {
-      // Best-effort server call; local clear happens unconditionally below.
-    }
+    } catch (_) {}
     state = const AsyncData(LicenseState.unlicensed);
   }
 
-  // Force an online re-validation (e.g. settings pull-to-refresh).
   Future<void> revalidate() async {
+    if (kIsWeb) return;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final service  = ref.read(licenseServiceProvider);
