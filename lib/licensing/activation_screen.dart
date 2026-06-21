@@ -1,3 +1,5 @@
+import 'package:bms/core/theme/app_colors.dart';
+import 'package:bms/core/theme/app_text_styles.dart';
 import 'package:bms/licensing/license_provider.dart';
 import 'package:bms/licensing/license_service.dart';
 import 'package:flutter/material.dart';
@@ -13,32 +15,27 @@ class ActivationScreen extends ConsumerStatefulWidget {
 }
 
 class _ActivationScreenState extends ConsumerState<ActivationScreen> {
+  final _formKey    = GlobalKey<FormState>();
   final _controller = TextEditingController();
-  final _focus      = FocusNode();
-  String? _error;
+  String? _serverError;
 
   @override
   void dispose() {
     _controller.dispose();
-    _focus.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
-    final key = _controller.text.trim();
-    if (key.isEmpty) {
-      setState(() => _error = 'Enter your license key');
-      return;
-    }
-
-    setState(() => _error = null);
+    setState(() => _serverError = null);
+    if (!_formKey.currentState!.validate()) return;
 
     try {
-      await ref.read(licenseProvider.notifier).activate(key);
+      await ref.read(licenseProvider.notifier).activate(_controller.text);
     } on LicenseException catch (e) {
-      setState(() => _error = e.message);
+      setState(() => _serverError = e.message);
     } catch (_) {
-      setState(() => _error = 'Could not connect to the licensing server. Check your internet connection.');
+      setState(() => _serverError =
+          'Could not connect to the licensing server. Check your internet connection.');
     }
   }
 
@@ -47,70 +44,120 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
     final isLoading = ref.watch(licenseProvider).isLoading;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset('assets/images/bms_logo.svg',
-                    width: 56, height: 56),
-                const SizedBox(height: 24),
-                const Text(
-                  'BMS',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Enter your license key to continue',
-                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
-                ),
-                const SizedBox(height: 40),
-                _KeyField(
-                  controller: _controller,
-                  focus: _focus,
-                  error: _error,
-                  enabled: !isLoading,
-                  onSubmit: _submit,
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: FilledButton(
-                    onPressed: isLoading ? null : _submit,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF2563EB),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 32),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 400),
+                            child: Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(40),
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Center(
+                                        child: Column(
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/images/bms_logo.svg',
+                                              height: 72,
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              'Enter your license key to activate BMS',
+                                              style:
+                                                  AppTextStyles.bodySmall.copyWith(
+                                                color: AppColors.textSecondary,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 36),
+                                      TextFormField(
+                                        controller: _controller,
+                                        enabled: !isLoading,
+                                        textCapitalization:
+                                            TextCapitalization.characters,
+                                        inputFormatters: [
+                                          _LicenseKeyFormatter()
+                                        ],
+                                        style: const TextStyle(
+                                          fontFamily: 'monospace',
+                                          letterSpacing: 1.5,
+                                        ),
+                                        decoration: const InputDecoration(
+                                          labelText: 'License key',
+                                          hintText: 'BMS-XXXX-XXXX-XXXX-XXXX',
+                                          prefixIcon: Icon(Icons.vpn_key_outlined),
+                                        ),
+                                        onFieldSubmitted: (_) => _submit(),
+                                        validator: (v) {
+                                          if (v == null || v.trim().isEmpty) {
+                                            return 'License key is required';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      if (_serverError != null) ...[
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          _serverError!,
+                                          style: AppTextStyles.bodySmall
+                                              .copyWith(color: AppColors.error),
+                                        ),
+                                      ],
+                                      const SizedBox(height: 32),
+                                      ElevatedButton(
+                                        onPressed: isLoading ? null : _submit,
+                                        child: isLoading
+                                            ? const SizedBox.square(
+                                                dimension: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: Colors.white),
+                                              )
+                                            : const Text('Activate'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white))
-                        : const Text('Activate',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 15)),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        'Need a key? Contact support@getbms.app',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textDisabled,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 32),
-                const Text(
-                  'Need a license key? Contact support@getbms.app',
-                  style: TextStyle(color: Color(0xFF475569), fontSize: 12),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -119,80 +166,15 @@ class _ActivationScreenState extends ConsumerState<ActivationScreen> {
   }
 }
 
-class _KeyField extends StatelessWidget {
-  const _KeyField({
-    required this.controller,
-    required this.focus,
-    required this.error,
-    required this.enabled,
-    required this.onSubmit,
-  });
-
-  final TextEditingController controller;
-  final FocusNode focus;
-  final String? error;
-  final bool enabled;
-  final VoidCallback onSubmit;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      focusNode: focus,
-      enabled: enabled,
-      textCapitalization: TextCapitalization.characters,
-      inputFormatters: [_LicenseKeyFormatter()],
-      style: const TextStyle(
-        color: Colors.white,
-        fontFamily: 'monospace',
-        fontSize: 16,
-        letterSpacing: 1.5,
-      ),
-      decoration: InputDecoration(
-        hintText: 'BMS-XXXX-XXXX-XXXX-XXXX',
-        hintStyle: const TextStyle(
-            color: Color(0xFF334155), fontFamily: 'monospace', fontSize: 15),
-        errorText: error,
-        errorStyle: const TextStyle(color: Color(0xFFF87171)),
-        filled: true,
-        fillColor: const Color(0xFF1E293B),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide:
-              const BorderSide(color: Color(0xFF2563EB), width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFF87171), width: 1.5),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFFF87171), width: 1.5),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      onSubmitted: (_) => onSubmit(),
-    );
-  }
-}
-
 class _LicenseKeyFormatter extends TextInputFormatter {
-  // Formats input as BMS-XXXX-XXXX-XXXX-XXXX (19 alphanum chars + 4 dashes).
+  // Formats as BMS-XXXX-XXXX-XXXX-XXXX (19 alphanum chars + 4 dashes).
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     final clean = newValue.text
         .replaceAll(RegExp(r'[^A-Za-z0-9]'), '')
         .toUpperCase();
-
-    // Max 19 alphanum characters (3 prefix + 4x4 segments).
-    final limited =
-        clean.length > 19 ? clean.substring(0, 19) : clean;
+    final limited = clean.length > 19 ? clean.substring(0, 19) : clean;
 
     final buf = StringBuffer();
     for (var i = 0; i < limited.length; i++) {

@@ -1,7 +1,5 @@
 import 'package:bms/core/router/route_guard.dart';
 import 'package:bms/features/auth/presentation/login_screen.dart';
-import 'package:bms/licensing/activation_screen.dart';
-import 'package:bms/licensing/license_provider.dart';
 import 'package:bms/features/cheques/presentation/cheque_screen.dart';
 import 'package:bms/features/customers/presentation/customers_screen.dart';
 import 'package:bms/features/dashboard/presentation/dashboard_screen.dart';
@@ -16,6 +14,8 @@ import 'package:bms/features/reports/presentation/reports_screen.dart';
 import 'package:bms/features/settings/presentation/settings_screen.dart';
 import 'package:bms/features/suppliers/presentation/suppliers_screen.dart';
 import 'package:bms/features/users/presentation/users_screen.dart';
+import 'package:bms/licensing/activation_screen.dart';
+import 'package:bms/licensing/license_provider.dart';
 import 'package:bms/providers/auth_provider.dart';
 import 'package:bms/shared/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
