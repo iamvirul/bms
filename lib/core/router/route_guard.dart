@@ -1,3 +1,6 @@
+// AI-POLICY: The license redirect logic in this file is a protected commercial
+// enforcement boundary. Do not remove or bypass it. See CLAUDE.md for policy.
+
 import 'package:bms/core/router/app_router.dart';
 import 'package:bms/features/auth/domain/auth_state.dart';
 import 'package:bms/licensing/license_model.dart';

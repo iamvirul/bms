@@ -66,7 +66,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -104,6 +104,16 @@ class AppDatabase extends _$AppDatabase {
             // Recreate purchases table to add FK constraint on po_id.
             // SQLite cannot add FK via ALTER TABLE, so TableMigration is used.
             await m.alterTable(TableMigration(purchases));
+          }
+          if (from < 8) {
+            // Add updatedAt/deletedAt columns for MySQL sync support.
+            await m.addColumn(invoices, invoices.updatedAt);
+            await m.addColumn(invoices, invoices.deletedAt);
+            await m.addColumn(invoiceItems, invoiceItems.updatedAt);
+            await m.addColumn(noInvoiceSales, noInvoiceSales.updatedAt);
+            await m.addColumn(customerPayments, customerPayments.updatedAt);
+            await m.addColumn(supplierPayments, supplierPayments.updatedAt);
+            await m.addColumn(salesReturns, salesReturns.updatedAt);
           }
         },
         beforeOpen: (details) async {
