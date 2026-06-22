@@ -10,7 +10,7 @@ const _eulaText = '''
 END-USER LICENSE AGREEMENT (EULA)
 Business Management System (BMS)
 
-IMPORTANT — READ CAREFULLY BEFORE USING THIS SOFTWARE
+IMPORTANT - READ CAREFULLY BEFORE USING THIS SOFTWARE
 
 This End-User License Agreement ("Agreement") is a legal contract between you ("Licensee") and the BMS software provider ("Licensor"). By clicking "Accept & Continue" you agree to be bound by the terms of this Agreement. If you do not agree, click "Decline" to exit.
 
