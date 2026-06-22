@@ -7,6 +7,7 @@ import 'package:bms/features/cheques/presentation/cheque_screen.dart';
 import 'package:bms/features/customers/presentation/customers_screen.dart';
 import 'package:bms/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:bms/features/debtors/presentation/debtors_screen.dart';
+import 'package:bms/features/eula/presentation/eula_screen.dart';
 import 'package:bms/features/grn/presentation/grn_screen.dart';
 import 'package:bms/features/inventory/presentation/inventory_screen.dart';
 import 'package:bms/features/invoices/presentation/invoices_screen.dart';
@@ -20,6 +21,7 @@ import 'package:bms/features/users/presentation/users_screen.dart';
 import 'package:bms/licensing/activation_screen.dart';
 import 'package:bms/licensing/license_provider.dart';
 import 'package:bms/providers/auth_provider.dart';
+import 'package:bms/providers/eula_provider.dart';
 import 'package:bms/shared/widgets/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +39,7 @@ GoRouter appRouter(Ref ref) {
 
   ref.listen(currentAuthStateProvider, (_, _) => notifier.notify());
   ref.listen(licenseProvider, (_, _) => notifier.notify());
+  ref.listen(eulaProvider, (_, _) => notifier.notify());
   ref.onDispose(notifier.dispose);
 
   return GoRouter(
@@ -46,12 +49,18 @@ GoRouter appRouter(Ref ref) {
       state: state,
       authState: ref.read(currentAuthStateProvider),
       license: ref.read(licenseProvider),
+      eula: ref.read(eulaProvider),
     ),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
         pageBuilder: (context, state) => _fadePage(state, const _SplashPage()),
+      ),
+      GoRoute(
+        path: AppRoutes.eula,
+        name: 'eula',
+        pageBuilder: (context, state) => _fadePage(state, const EulaScreen()),
       ),
       GoRoute(
         path: AppRoutes.activate,
@@ -180,6 +189,7 @@ class _SplashPage extends StatelessWidget {
 
 abstract final class AppRoutes {
   static const String splash   = '/';
+  static const String eula     = '/eula';
   static const String activate = '/activate';
   static const String login = '/login';
   static const String dashboard = '/dashboard';
