@@ -16,6 +16,7 @@ import 'package:bms/features/pos/presentation/pos_screen.dart';
 import 'package:bms/features/quick_sales/presentation/quick_sales_screen.dart';
 import 'package:bms/features/reports/presentation/reports_screen.dart';
 import 'package:bms/features/settings/presentation/settings_screen.dart';
+import 'package:bms/features/splash/presentation/splash_screen.dart';
 import 'package:bms/features/suppliers/presentation/suppliers_screen.dart';
 import 'package:bms/features/users/presentation/users_screen.dart';
 import 'package:bms/licensing/activation_screen.dart';
@@ -55,7 +56,7 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
-        pageBuilder: (context, state) => _fadePage(state, const _SplashPage()),
+        pageBuilder: (context, state) => _fadePage(state, const SplashScreen()),
       ),
       GoRoute(
         path: AppRoutes.eula,
@@ -172,20 +173,6 @@ CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) =>
         );
       },
     );
-
-class _SplashPage extends StatelessWidget {
-  const _SplashPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFF0F172A),
-      body: Center(
-        child: CircularProgressIndicator(color: Color(0xFF2563EB)),
-      ),
-    );
-  }
-}
 
 abstract final class AppRoutes {
   static const String splash   = '/';
