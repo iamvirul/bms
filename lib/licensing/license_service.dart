@@ -174,11 +174,16 @@ class LicenseService {
           )
           .timeout(const Duration(seconds: 15));
 
+      // Check 4xx before parsing body — malformed JSON must not bypass revocation.
+      if (resp.statusCode >= 400 && resp.statusCode < 500) {
+        await clear();
+        return LicenseState.unlicensed;
+      }
+
       final dynamic decoded;
       try {
         decoded = resp.body.isNotEmpty ? jsonDecode(resp.body) : null;
       } catch (_) {
-        // Invalid JSON - fall through to cached state.
         return loadCachedState();
       }
 
@@ -197,12 +202,6 @@ class LicenseService {
         return loadCachedState();
       }
 
-      // Any 4xx = server explicitly rejected - clear local state.
-      // 5xx / network failure falls through to cached grace-period state.
-      if (resp.statusCode >= 400 && resp.statusCode < 500) {
-        await clear();
-        return LicenseState.unlicensed;
-      }
     } catch (_) {
       // Network unavailable - fall through to cached state.
     }
